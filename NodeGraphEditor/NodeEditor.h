@@ -36,6 +36,10 @@ private:
 	void drawWindowNodeList();
 	void drawWindowNodeViewer();
 
+	void mouseDown(const sf::Vector2f & _pos);
+	void mouseUpdate(const sf::Vector2f & _pos);
+	void mouseUp(const sf::Vector2f & _pos);
+
 
 	Camera * nodeViewerCamera;
 	//NodeTemplate * nodeTemplate;
@@ -45,6 +49,23 @@ private:
 	std::map<int, std::shared_ptr<NodeData>> nodeDatas;
 
 	float scrollDelta = 0.0f;
+
+
+/* TODO: put collision code in functions like this
+	void mouseCollidesWithInputProperty()*/
+
+
+	enum DragType
+	{
+		NONE,
+		NODEDATA,
+		INPUTJOINT,
+		OUTPUTJOINT
+	} dragType;
+	std::shared_ptr<NodeData> nodeDataDrag = nullptr;
+	int propertyIDDrag;
+	sf::Vector2f dragInitialOffset{ 0, 0 };
+
 
 public:
 

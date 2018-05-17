@@ -11,6 +11,7 @@
 #include "NodeTemplate.h"
 #include "NodeData.h"
 #include "Camera.h"
+#include "Util.h"
 
 NodeEditor * NodeEditor::instance = nullptr;
 
@@ -194,6 +195,92 @@ void NodeEditor::drawWindowNodeViewer()
 	ImGui::End();
 }
 
+void NodeEditor::mouseDown(const sf::Vector2f & _pos)
+{
+	for (const std::pair<int, std::shared_ptr<NodeData>> & nodeDataPair : nodeDatas)
+	{
+		const NodeData & nodeData = *nodeDataPair.second;
+		NodeTemplate & nodeTemplate = *nodeTemplates[nodeData.nodeTemplateID];
+
+		sf::FloatRect region = nodeTemplate.getHeaderRegion(*nodeViewerCamera, nodeData);
+
+		if (region.contains(_pos))
+		{
+			dragType = DragType::NODEDATA;
+			nodeDataDrag = nodeDataPair.second;
+			dragInitialOffset = _pos - sf::Vector2f{ region.left, region.top };
+			return;
+		}
+		else
+		{
+			for (int i = 0; i < nodeTemplate.getInputsCount(); ++i)
+			{
+				auto jointRegion = nodeTemplate.getInputJointRegion(i, *nodeViewerCamera, nodeData);
+				if (circleContainsPoint(jointRegion, _pos))
+				{
+					dragType = DragType::INPUTJOINT;
+					nodeDataDrag = nodeDataPair.second;
+					propertyIDDrag = i;
+
+					std::cout << "Mouse down on node: " << nodeDataPair.first << ", input property: " << i << std::endl;
+
+					return;
+				}
+			}
+			for (int i = 0; i < nodeTemplate.getOutputsCount(); ++i)
+			{
+				auto jointRegion = nodeTemplate.getOutputJointRegion(i, *nodeViewerCamera, nodeData);
+				if (circleContainsPoint(jointRegion, _pos))
+				{
+					dragType = DragType::OUTPUTJOINT;
+					nodeDataDrag = nodeDataPair.second;
+					propertyIDDrag = i;
+
+					std::cout << "Mouse down on node: " << nodeDataPair.first << ", output property: " << i << std::endl;
+
+					return;
+				}
+			}
+		}
+	}
+
+
+}
+
+void NodeEditor::mouseUp(const sf::Vector2f & _pos)
+{
+
+
+
+	dragType = DragType::NONE;
+	nodeDataDrag = nullptr;
+	dragInitialOffset = { 0, 0 };
+	propertyIDDrag = -1;
+}
+
+void NodeEditor::mouseUpdate(const sf::Vector2f & _pos)
+{
+	sf::Vector2f worldPos = nodeViewerCamera->getTransform().getInverse().transformPoint(_pos - dragInitialOffset);
+
+	switch (dragType)
+	{
+	case DragType::NODEDATA:
+		if (nodeDataDrag != nullptr)
+		{
+			nodeDataDrag->position = worldPos;
+		}
+		break;
+
+	case DragType::INPUTJOINT:
+
+		break;
+
+	case DragType::OUTPUTJOINT:
+
+		break;
+	}
+}
+
 NodeEditor::NodeEditor()
 {
 }
@@ -228,8 +315,23 @@ void NodeEditor::start()
 			{
 				scrollDelta = event.mouseWheelScroll.delta;
 			}
-
+			else if (event.type == sf::Event::MouseButtonPressed)
+			{
+				if (event.mouseButton.button == 0)
+				{
+					mouseDown(sf::Vector2f{ (float)event.mouseButton.x, (float)event.mouseButton.y });
+				}
+			}
+			else if (event.type == sf::Event::MouseButtonReleased)
+			{
+				if (event.mouseButton.button == 0)
+				{
+					mouseUp(sf::Vector2f{ (float)event.mouseButton.x, (float)event.mouseButton.y });
+				}
+			}
 		}
+
+		mouseUpdate(ImGui::GetMousePos());
 
 
 		//SETUP

@@ -146,6 +146,7 @@
     <ClInclude Include="NodeTemplate.h" />
     <ClInclude Include="NodeEditor.h" />
     <ClInclude Include="Property.h" />
+    <ClInclude Include="Util.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
@@ -157,6 +158,7 @@
     <ClCompile Include="NodeTemplate.cpp" />
     <ClCompile Include="NodeEditor.cpp" />
     <ClCompile Include="Property.cpp" />
+    <ClCompile Include="Util.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

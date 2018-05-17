@@ -74,7 +74,7 @@ void NodeTemplate::drawProperties(ImDrawList * _drawList, Camera & _camera, cons
 		_drawList->AddText(ImGui::GetFont(), getNodeFontSize(_camera), propertyStart, ImColor(style.Colors[ImGuiCol_Text]), p.name.c_str());
 
 		//Property joint
-		_drawList->AddCircleFilled(getInputJointPos(i, _camera, _data), NODE_PADDING * scale, ImColor(style.Colors[ImGuiCol_Text]));
+		_drawList->AddCircleFilled(getInputJointRegion(i, _camera, _data).first, NODE_PADDING * scale, ImColor(style.Colors[ImGuiCol_Text]));
 	}
 
 	//Outputs
@@ -88,7 +88,7 @@ void NodeTemplate::drawProperties(ImDrawList * _drawList, Camera & _camera, cons
 		_drawList->AddText(ImGui::GetFont(), getNodeFontSize(_camera), propertyStart, ImColor(style.Colors[ImGuiCol_Text]), p.name.c_str());
 
 		//Property joint
-		_drawList->AddCircleFilled(getOutputJointPos(i, _camera, _data), NODE_PADDING * scale, ImColor(style.Colors[ImGuiCol_Text]));
+		_drawList->AddCircleFilled(getOutputJointRegion(i, _camera, _data).first, NODE_PADDING * scale, ImColor(style.Colors[ImGuiCol_Text]));
 	}
 }
 
@@ -99,8 +99,8 @@ void NodeTemplate::drawNodeConnections(ImDrawList * _drawList, Camera & _camera,
 		const NodeData & otherNodeData = NodeEditor::get().getNodeData(connection.otherNodeID);
 		const NodeTemplate & otherNodeTemplate = NodeEditor::get().getNodeTemplate(otherNodeData.nodeTemplateID);
 
-		sf::Vector2f startPos = getOutputJointPos(connection.thisNodeOutputPropertyIndex, _camera, _data);
-		sf::Vector2f endPos = otherNodeTemplate.getInputJointPos(connection.otherNodeInputPropertyIndex, _camera, otherNodeData);
+		sf::Vector2f startPos = getOutputJointRegion(connection.thisNodeOutputPropertyIndex, _camera, _data).first;
+		sf::Vector2f endPos = otherNodeTemplate.getInputJointRegion(connection.otherNodeInputPropertyIndex, _camera, otherNodeData).first;
 
 		auto c1 = startPos + 0.3f * (endPos - startPos);
 		c1.y = startPos.y;
@@ -153,25 +153,60 @@ void NodeTemplate::recalculateSize()
 	size.y = lineHeight + NODE_PADDING * 2.f + NODE_PADDING		+ (inputs.size() > outputs.size() ? inputs.size() : outputs.size()) * (lineHeight + NODE_PADDING);
 }
 
-float NodeTemplate::getNodeFontSize(Camera & _camera)
+sf::FloatRect NodeTemplate::getHeaderRegion(Camera & _camera, const NodeData & _data) const
 {
-	return ImGui::GetFontSize() * _camera.getScale() * START_NODE_FONT_SCALE;
+	auto rectStart = _camera.getTransform().transformPoint(_data.position);
+	auto titleEnd = _camera.getTransform().transformPoint(_data.position + sf::Vector2f{ size.x, lineHeight + NODE_PADDING * 2.f });
+	return sf::FloatRect{ rectStart, titleEnd - rectStart };
 }
 
-sf::Vector2f NodeTemplate::getInputJointPos(int propertyIndex, Camera & _camera, const NodeData & _data) const
+std::pair<sf::Vector2f, float> NodeTemplate::getInputJointRegion(int propertyIndex, Camera & _camera, const NodeData & _data) const
 {
 	auto contentStartLocal = _data.position + sf::Vector2f{ NODE_PADDING, lineHeight + NODE_PADDING * 3.f };
 	auto propertyStartLocal = contentStartLocal + sf::Vector2f{ 0, propertyIndex * (lineHeight + NODE_PADDING) };
 	auto propertyStart = _camera.getTransform().transformPoint(propertyStartLocal + sf::Vector2f{ 0, lineHeight / 2.f });
 
-	return propertyStart;
+	return { propertyStart, NODE_PADDING * _camera.getScale() };
 }
 
-sf::Vector2f NodeTemplate::getOutputJointPos(int propertyIndex, Camera & _camera, const NodeData & _data) const
+std::pair<sf::Vector2f, float> NodeTemplate::getOutputJointRegion(int propertyIndex, Camera & _camera, const NodeData & _data) const
 {
 	auto contentStartLocalRight = _data.position + sf::Vector2f{ size.x - NODE_PADDING, lineHeight + NODE_PADDING * 3.f };
 	auto propertyStartLocalRight = contentStartLocalRight + sf::Vector2f{ 0, propertyIndex * (lineHeight + NODE_PADDING) };
 	auto propertyStartRight = _camera.getTransform().transformPoint(propertyStartLocalRight + sf::Vector2f{ 0, lineHeight / 2.f });
 
-	return propertyStartRight;
+	return { propertyStartRight, NODE_PADDING * _camera.getScale() };
 }
+
+int NodeTemplate::getInputsCount() const
+{
+	return inputs.size();
+}
+
+int NodeTemplate::getOutputsCount() const
+{
+	return outputs.size();
+}
+
+float NodeTemplate::getNodeFontSize(Camera & _camera)
+{
+	return ImGui::GetFontSize() * _camera.getScale() * START_NODE_FONT_SCALE;
+}
+
+//sf::Vector2f NodeTemplate::getInputJointPos(int propertyIndex, Camera & _camera, const NodeData & _data) const
+//{
+//	auto contentStartLocal = _data.position + sf::Vector2f{ NODE_PADDING, lineHeight + NODE_PADDING * 3.f };
+//	auto propertyStartLocal = contentStartLocal + sf::Vector2f{ 0, propertyIndex * (lineHeight + NODE_PADDING) };
+//	auto propertyStart = _camera.getTransform().transformPoint(propertyStartLocal + sf::Vector2f{ 0, lineHeight / 2.f });
+//
+//	return propertyStart;
+//}
+//
+//sf::Vector2f NodeTemplate::getOutputJointPos(int propertyIndex, Camera & _camera, const NodeData & _data) const
+//{
+//	auto contentStartLocalRight = _data.position + sf::Vector2f{ size.x - NODE_PADDING, lineHeight + NODE_PADDING * 3.f };
+//	auto propertyStartLocalRight = contentStartLocalRight + sf::Vector2f{ 0, propertyIndex * (lineHeight + NODE_PADDING) };
+//	auto propertyStartRight = _camera.getTransform().transformPoint(propertyStartLocalRight + sf::Vector2f{ 0, lineHeight / 2.f });
+//
+//	return propertyStartRight;
+//}
