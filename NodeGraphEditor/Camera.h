@@ -20,6 +20,7 @@ public:
 
 	sf::Vector2f & getPosition();
 	float & getScale();
+	const float & getScale() const;
 
 	//void setPosition(sf::Vector2f & _position);
 	//void setScale(float & _scale);

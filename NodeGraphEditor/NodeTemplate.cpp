@@ -2,6 +2,7 @@
 
 #include "NodeData.h"
 #include "NodeEditor.h"
+#include "Util.h"
 
 #define START_NODE_FONT_SCALE 18.f / 64.f
 #define NODE_PADDING 5.f
@@ -102,13 +103,15 @@ void NodeTemplate::drawNodeConnections(ImDrawList * _drawList, Camera & _camera,
 		sf::Vector2f startPos = getOutputJointRegion(connection.thisNodeOutputPropertyIndex, _camera, _data).first;
 		sf::Vector2f endPos = otherNodeTemplate.getInputJointRegion(connection.otherNodeInputPropertyIndex, _camera, otherNodeData).first;
 
-		auto c1 = startPos + 0.3f * (endPos - startPos);
+		/*auto c1 = startPos + 0.3f * (endPos - startPos);
 		c1.y = startPos.y;
 
 		auto c2 = startPos + 0.3f * (endPos - startPos);
 		c2.y = endPos.y;
 
-		_drawList->AddBezierCurve(startPos, c1, c2, endPos, IM_COL32_WHITE, 1.f);
+		_drawList->AddBezierCurve(startPos, c1, c2, endPos, IM_COL32_WHITE, 1.f);*/
+
+		drawConnectionRaw(_drawList, _camera, startPos, endPos, 0);
 	}
 }
 
@@ -153,14 +156,14 @@ void NodeTemplate::recalculateSize()
 	size.y = lineHeight + NODE_PADDING * 2.f + NODE_PADDING		+ (inputs.size() > outputs.size() ? inputs.size() : outputs.size()) * (lineHeight + NODE_PADDING);
 }
 
-sf::FloatRect NodeTemplate::getHeaderRegion(Camera & _camera, const NodeData & _data) const
+sf::FloatRect NodeTemplate::getHeaderRegion(const Camera & _camera, const NodeData & _data) const
 {
 	auto rectStart = _camera.getTransform().transformPoint(_data.position);
 	auto titleEnd = _camera.getTransform().transformPoint(_data.position + sf::Vector2f{ size.x, lineHeight + NODE_PADDING * 2.f });
 	return sf::FloatRect{ rectStart, titleEnd - rectStart };
 }
 
-std::pair<sf::Vector2f, float> NodeTemplate::getInputJointRegion(int propertyIndex, Camera & _camera, const NodeData & _data) const
+std::pair<sf::Vector2f, float> NodeTemplate::getInputJointRegion(int propertyIndex, const Camera & _camera, const NodeData & _data) const
 {
 	auto contentStartLocal = _data.position + sf::Vector2f{ NODE_PADDING, lineHeight + NODE_PADDING * 3.f };
 	auto propertyStartLocal = contentStartLocal + sf::Vector2f{ 0, propertyIndex * (lineHeight + NODE_PADDING) };
@@ -169,7 +172,7 @@ std::pair<sf::Vector2f, float> NodeTemplate::getInputJointRegion(int propertyInd
 	return { propertyStart, NODE_PADDING * _camera.getScale() };
 }
 
-std::pair<sf::Vector2f, float> NodeTemplate::getOutputJointRegion(int propertyIndex, Camera & _camera, const NodeData & _data) const
+std::pair<sf::Vector2f, float> NodeTemplate::getOutputJointRegion(int propertyIndex, const Camera & _camera, const NodeData & _data) const
 {
 	auto contentStartLocalRight = _data.position + sf::Vector2f{ size.x - NODE_PADDING, lineHeight + NODE_PADDING * 3.f };
 	auto propertyStartLocalRight = contentStartLocalRight + sf::Vector2f{ 0, propertyIndex * (lineHeight + NODE_PADDING) };
