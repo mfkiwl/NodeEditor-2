@@ -51,8 +51,8 @@ private:
 	float scrollDelta = 0.0f;
 
 
-/* TODO: put collision code in functions like this
-	void mouseCollidesWithInputProperty()*/
+/* TODO: put collision code in functions like this*/
+	//void doesPositionCollideWithNode(int & _node, sf::Vector2f & _position)
 
 
 	enum DragType
