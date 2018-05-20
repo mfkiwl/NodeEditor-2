@@ -1,4 +1,4 @@
-#include "NodeEditor.h"
+#include "Program.h"
 
 #include <SFML\Graphics\RenderWindow.hpp>
 #include <SFML\System\Clock.hpp>
@@ -8,24 +8,27 @@
 //TODO: REMOVE:
 #include <iostream>
 
+#include <fstream>
+#include "json.hpp"
+
 #include "NodeTemplate.h"
 #include "NodeData.h"
 #include "Camera.h"
 #include "Util.h"
 
-NodeEditor * NodeEditor::instance = nullptr;
+Program * Program::instance = nullptr;
 
-NodeEditor & NodeEditor::get()
+Program & Program::get()
 {
 	return *instance;
 }
 
-void NodeEditor::create()
+void Program::create()
 {
-	instance = new NodeEditor();
+	instance = new Program();
 }
 
-void NodeEditor::loadFonts()
+void Program::loadFonts()
 {
 	auto io = ImGui::GetIO();
 
@@ -36,7 +39,7 @@ void NodeEditor::loadFonts()
 	ImGui::SFML::UpdateFontTexture();
 }
 
-void NodeEditor::load()
+void Program::load()
 {
 	loadFonts();
 
@@ -78,7 +81,93 @@ void NodeEditor::load()
 
 }
 
-void NodeEditor::drawWindowNodeList()
+void Program::closeCurrent()
+{
+	nodeViewerCamera = new Camera();
+	nodeDatas.clear();
+}
+
+void Program::open()
+{
+	using namespace nlohmann;
+
+	json inputJson;
+
+	std::ifstream openFile("output.json");
+
+	openFile >> inputJson;
+
+	openFile.close();
+
+
+	for (auto itr = inputJson.begin(); itr != inputJson.end(); ++itr)
+	{
+		const json nodeDataJson = *itr;
+
+		std::shared_ptr<NodeData> deserialisedNodeData = std::make_shared<NodeData>(NodeData::deserialise(nodeDataJson));
+
+		nodeDatas[deserialisedNodeData->id] = deserialisedNodeData;
+	}
+}
+
+void Program::save()
+{
+	using namespace nlohmann;
+
+
+	json outputJson;
+
+	for (const auto & _nodeData : nodeDatas)
+	{
+		const auto & nodeData = _nodeData.second;
+
+		json nodeSerialised = nodeData->serialise();
+
+		outputJson.push_back(nodeSerialised);
+	}
+
+
+
+	std::ofstream saveFile("output.json");
+
+	saveFile << outputJson;
+
+	saveFile.close();
+
+}
+
+void Program::drawMainMenu()
+{
+	if (ImGui::BeginMainMenuBar())
+	{
+		if (ImGui::BeginMenu("File"))
+		{
+			ImGui::MenuItem("New");
+			if (ImGui::MenuItem("Open"))
+			{
+				open();
+			}
+			if (ImGui::MenuItem("Save"))
+			{
+				save();
+			}
+			if (ImGui::MenuItem("Close"))
+			{
+				closeCurrent();
+			}
+			ImGui::EndMenu();
+		}
+
+		if (ImGui::BeginMenu("Options"))
+		{
+			ImGui::MenuItem("Settings");
+			ImGui::EndMenu();
+		}
+		ImGui::EndMainMenuBar();
+	}
+}
+
+void Program::drawWindowNodeList()
 {
 	////ImGui::SetNextWindowPos({ 0, 0 });
 	////ImGui::SetNextWindowSize({ 300, 200 });
@@ -122,7 +211,7 @@ void NodeEditor::drawWindowNodeList()
 	ImGui::End();
 }
 
-void NodeEditor::drawWindowNodeViewer()
+void Program::drawWindowNodeViewer()
 {
 	if (ImGui::Begin("Node Editor", nullptr, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoMove))
 	{
@@ -207,7 +296,7 @@ void NodeEditor::drawWindowNodeViewer()
 	ImGui::End();
 }
 
-void NodeEditor::mouseDown(const sf::Vector2f & _pos)
+void Program::mouseDown(const sf::Vector2f & _pos)
 {
 	if (doesScreenPositionCollideWithNode(nodeDataDragID, dragInitialOffset, _pos))
 	{
@@ -223,7 +312,7 @@ void NodeEditor::mouseDown(const sf::Vector2f & _pos)
 	}
 }
 
-void NodeEditor::mouseUp(const sf::Vector2f & _pos)
+void Program::mouseUp(const sf::Vector2f & _pos)
 {
 	//Check for attaching joints output->input
 	if (dragType == DragType::OUTPUTJOINT)
@@ -241,7 +330,7 @@ void NodeEditor::mouseUp(const sf::Vector2f & _pos)
 	resetDrag();
 }
 
-void NodeEditor::resetDrag()
+void Program::resetDrag()
 {
 
 	dragType = DragType::NONE;
@@ -250,7 +339,7 @@ void NodeEditor::resetDrag()
 	dragInitialOffset = { 0, 0 };
 }
 
-bool NodeEditor::doesScreenPositionCollideWithNode(int & _node, sf::Vector2f & _initialOffset, const sf::Vector2f & _position)
+bool Program::doesScreenPositionCollideWithNode(int & _node, sf::Vector2f & _initialOffset, const sf::Vector2f & _position)
 {
 	for (const std::pair<int, std::shared_ptr<NodeData>> & nodeDataPair : nodeDatas)
 	{
@@ -273,7 +362,7 @@ bool NodeEditor::doesScreenPositionCollideWithNode(int & _node, sf::Vector2f & _
 	return false;
 }
 
-bool NodeEditor::doesScreenPositionCollideWithJoint(int & _node, int & _property, const sf::Vector2f & _position, bool _jointIsInput)
+bool Program::doesScreenPositionCollideWithJoint(int & _node, int & _property, const sf::Vector2f & _position, bool _jointIsInput)
 {
 	for (const std::pair<int, std::shared_ptr<NodeData>> & nodeDataPair : nodeDatas)
 	{
@@ -320,7 +409,7 @@ bool NodeEditor::doesScreenPositionCollideWithJoint(int & _node, int & _property
 	return false;
 }
 
-void NodeEditor::mouseUpdate(const sf::Vector2f & _pos)
+void Program::mouseUpdate(const sf::Vector2f & _pos)
 {
 	sf::Vector2f worldPos = nodeViewerCamera->getTransform().getInverse().transformPoint(_pos - dragInitialOffset);
 
@@ -343,16 +432,16 @@ void NodeEditor::mouseUpdate(const sf::Vector2f & _pos)
 	}
 }
 
-NodeEditor::NodeEditor()
+Program::Program()
 {
 }
 
 
-NodeEditor::~NodeEditor()
+Program::~Program()
 {
 }
 
-void NodeEditor::start()
+void Program::start()
 {
 	sf::RenderWindow & window = *(sfmlWindow = new sf::RenderWindow(sf::VideoMode(1280, 768), "Node Graph Editor"));
 	window.setFramerateLimit(60);
@@ -401,6 +490,7 @@ void NodeEditor::start()
 
 
 		//Draw windows
+		drawMainMenu();
 		drawWindowNodeList();
 		drawWindowNodeViewer();
 		
@@ -426,13 +516,13 @@ void NodeEditor::start()
 	ImGui::SFML::Shutdown();
 }
 
-const NodeData & NodeEditor::getNodeData(int _id) const
+const NodeData & Program::getNodeData(int _id) const
 {
 	const NodeData & nodeData = *nodeDatas.at(_id);
 	return nodeData;
 }
 
-const NodeTemplate & NodeEditor::getNodeTemplate(int _id) const
+const NodeTemplate & Program::getNodeTemplate(int _id) const
 {
 	const NodeTemplate & nodeTemplate = *nodeTemplates.at(_id);
 	return nodeTemplate;

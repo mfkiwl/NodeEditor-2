@@ -1,7 +1,7 @@
 #include "NodeTemplate.h"
 
 #include "NodeData.h"
-#include "NodeEditor.h"
+#include "Program.h"
 #include "Util.h"
 
 #define START_NODE_FONT_SCALE 18.f / 64.f
@@ -97,8 +97,8 @@ void NodeTemplate::drawNodeConnections(ImDrawList * _drawList, Camera & _camera,
 {
 	for (const NodeConnection & connection : _data.nodeConnections)
 	{
-		const NodeData & otherNodeData = NodeEditor::get().getNodeData(connection.otherNodeID);
-		const NodeTemplate & otherNodeTemplate = NodeEditor::get().getNodeTemplate(otherNodeData.nodeTemplateID);
+		const NodeData & otherNodeData = Program::get().getNodeData(connection.otherNodeID);
+		const NodeTemplate & otherNodeTemplate = Program::get().getNodeTemplate(otherNodeData.nodeTemplateID);
 
 		sf::Vector2f startPos = getOutputJointRegion(connection.thisNodeOutputPropertyIndex, _camera, _data).first;
 		sf::Vector2f endPos = otherNodeTemplate.getInputJointRegion(connection.otherNodeInputPropertyIndex, _camera, otherNodeData).first;

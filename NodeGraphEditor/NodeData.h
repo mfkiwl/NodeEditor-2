@@ -2,6 +2,8 @@
 
 #include <SFML\Graphics.hpp>
 
+#include "json.hpp"
+
 class NodeConnection
 {
 public:
@@ -11,7 +13,12 @@ public:
 	int otherNodeID;
 	int otherNodeInputPropertyIndex;
 
+	NodeConnection();
 	NodeConnection(int, int, int, int);
+
+
+	nlohmann::json serialise() const;
+	static NodeConnection deserialise(const nlohmann::json & _j);
 };
 
 class NodeData
@@ -27,5 +34,8 @@ public:
 public:
 	NodeData(int _id, int _nodeTemplateID, const sf::Vector2f & _position);
 	~NodeData();
+
+	nlohmann::json serialise() const;
+	static NodeData deserialise(const nlohmann::json & _j);
 };
 

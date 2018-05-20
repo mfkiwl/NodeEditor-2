@@ -13,16 +13,16 @@ class NodeTemplate;
 class NodeData;
 class Camera;
 
-class NodeEditor
+class Program
 {
 private:
-	NodeEditor();
-	~NodeEditor();
+	Program();
+	~Program();
 
-	static NodeEditor * instance;
+	static Program * instance;
 
 public:
-	static NodeEditor & get();
+	static Program & get();
 	static void create();
 
 	ImFont * nodeHighResFont;
@@ -33,6 +33,7 @@ private:
 	sf::RenderWindow * sfmlWindow = nullptr;
 
 	bool nodeListOpen = true;
+	void drawMainMenu();
 	void drawWindowNodeList();
 	void drawWindowNodeViewer();
 
@@ -43,8 +44,6 @@ private:
 
 
 	Camera * nodeViewerCamera;
-	//NodeTemplate * nodeTemplate;
-	//NodeData * nodeData;
 
 	std::map<int, std::shared_ptr<NodeTemplate>> nodeTemplates;
 	std::map<int, std::shared_ptr<NodeData>> nodeDatas;
@@ -52,7 +51,6 @@ private:
 	float scrollDelta = 0.0f;
 
 
-/* TODO: put collision code in functions like this*/
 	bool doesScreenPositionCollideWithNode(int & _node, sf::Vector2f & _initialOffset, const sf::Vector2f & _position);
 	bool doesScreenPositionCollideWithJoint(int & _node, int & _property, const sf::Vector2f & _position, bool _jointIsInput);
 
@@ -74,6 +72,10 @@ public:
 	void start();
 	void loadFonts();
 	void load();
+
+	void closeCurrent();
+	void open();
+	void save();
 
 
 	const NodeData & getNodeData(int _id) const;

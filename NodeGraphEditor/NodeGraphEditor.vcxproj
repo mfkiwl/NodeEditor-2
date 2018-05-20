@@ -142,9 +142,11 @@
     <ClInclude Include="imgui\imconfig.h" />
     <ClInclude Include="imgui\imgui-SFML.h" />
     <ClInclude Include="imgui\imgui.h" />
+    <ClInclude Include="json.hpp" />
+    <ClInclude Include="JsonExtensions.h" />
     <ClInclude Include="NodeData.h" />
     <ClInclude Include="NodeTemplate.h" />
-    <ClInclude Include="NodeEditor.h" />
+    <ClInclude Include="Program.h" />
     <ClInclude Include="Property.h" />
     <ClInclude Include="Util.h" />
   </ItemGroup>
@@ -156,9 +158,12 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="NodeData.cpp" />
     <ClCompile Include="NodeTemplate.cpp" />
-    <ClCompile Include="NodeEditor.cpp" />
+    <ClCompile Include="Program.cpp" />
     <ClCompile Include="Property.cpp" />
     <ClCompile Include="Util.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="output.json" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

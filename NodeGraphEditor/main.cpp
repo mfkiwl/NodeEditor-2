@@ -1,9 +1,9 @@
-#include "NodeEditor.h"
+#include "Program.h"
 
 int main()
 {
-	NodeEditor::create();
-	NodeEditor::get().start();
+	Program::create();
+	Program::get().start();
 
 	return 0;
 }
