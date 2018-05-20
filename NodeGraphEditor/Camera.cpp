@@ -35,6 +35,11 @@ float & Camera::getScale()
 	return scale;
 }
 
+const float & Camera::getScale() const
+{
+	return scale;
+}
+
 //void Camera::setPosition(sf::Vector2f & _position)
 //{
 //	position = _position;

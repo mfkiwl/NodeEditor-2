@@ -11,6 +11,7 @@
 #include "NodeTemplate.h"
 #include "NodeData.h"
 #include "Camera.h"
+#include "Util.h"
 
 NodeEditor * NodeEditor::instance = nullptr;
 
@@ -71,9 +72,9 @@ void NodeEditor::load()
 	nodeDatas[6] = std::make_shared<NodeData>(6, 9, sf::Vector2f{ 500, 500 });
 
 
-
+/*
 	nodeDatas[3]->nodeConnections.push_back(NodeConnection{ 3, 1, 6, 0 });
-	nodeDatas[5]->nodeConnections.push_back(NodeConnection{ 5, 0, 6, 1 });
+	nodeDatas[5]->nodeConnections.push_back(NodeConnection{ 5, 0, 6, 1 });*/
 
 }
 
@@ -190,8 +191,156 @@ void NodeEditor::drawWindowNodeViewer()
 		}
 
 		ImGui::PopFont();
+
+
+
+		//Draw temporary connections to mouse position
+		if (dragType == DragType::OUTPUTJOINT)
+		{
+			const NodeData & nodeData = *nodeDatas[nodeDataDragID];
+			NodeTemplate & nodeTemplate = *nodeTemplates[nodeData.nodeTemplateID];
+
+			auto startPos = nodeTemplate.getOutputJointRegion(propertyIDDrag, *nodeViewerCamera, nodeData).first;
+			drawConnectionRaw(drawList, *nodeViewerCamera, startPos, ImGui::GetMousePos(), 0);
+		}
 	}
 	ImGui::End();
+}
+
+void NodeEditor::mouseDown(const sf::Vector2f & _pos)
+{
+	if (doesScreenPositionCollideWithNode(nodeDataDragID, dragInitialOffset, _pos))
+	{
+		dragType = DragType::NODEDATA;
+	}
+	else if (doesScreenPositionCollideWithJoint(nodeDataDragID, propertyIDDrag, _pos, true))
+	{
+		dragType = DragType::INPUTJOINT;
+	}
+	else if (doesScreenPositionCollideWithJoint(nodeDataDragID, propertyIDDrag, _pos, false))
+	{
+		dragType = DragType::OUTPUTJOINT;
+	}
+}
+
+void NodeEditor::mouseUp(const sf::Vector2f & _pos)
+{
+	//Check for attaching joints output->input
+	if (dragType == DragType::OUTPUTJOINT)
+	{
+		int newNodeID = -1;
+		int newPropertyID = -1;
+		if (doesScreenPositionCollideWithJoint(newNodeID, newPropertyID, _pos, true))
+		{
+
+			nodeDatas[nodeDataDragID]->nodeConnections.push_back(NodeConnection{ nodeDataDragID, propertyIDDrag, newNodeID, newPropertyID });
+
+		}
+	}
+
+	resetDrag();
+}
+
+void NodeEditor::resetDrag()
+{
+
+	dragType = DragType::NONE;
+	nodeDataDragID = -1;
+	propertyIDDrag = -1;
+	dragInitialOffset = { 0, 0 };
+}
+
+bool NodeEditor::doesScreenPositionCollideWithNode(int & _node, sf::Vector2f & _initialOffset, const sf::Vector2f & _position)
+{
+	for (const std::pair<int, std::shared_ptr<NodeData>> & nodeDataPair : nodeDatas)
+	{
+		const NodeData & nodeData = *nodeDataPair.second;
+		NodeTemplate & nodeTemplate = *nodeTemplates[nodeData.nodeTemplateID];
+
+		sf::FloatRect region = nodeTemplate.getHeaderRegion(*nodeViewerCamera, nodeData);
+
+		if (region.contains(_position))
+		{
+			//Set node ID
+			_node = nodeDataPair.first;
+
+			//Set initial offset position
+			_initialOffset = _position - sf::Vector2f{ region.left, region.top };
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool NodeEditor::doesScreenPositionCollideWithJoint(int & _node, int & _property, const sf::Vector2f & _position, bool _jointIsInput)
+{
+	for (const std::pair<int, std::shared_ptr<NodeData>> & nodeDataPair : nodeDatas)
+	{
+		const NodeData & nodeData = *nodeDataPair.second;
+		NodeTemplate & nodeTemplate = *nodeTemplates[nodeData.nodeTemplateID];
+
+		if (_jointIsInput)
+		{
+			for (int i = 0; i < nodeTemplate.getInputsCount(); ++i)
+			{
+				auto jointRegion = nodeTemplate.getInputJointRegion(i, *nodeViewerCamera, nodeData);
+				if (circleContainsPoint(jointRegion, _position))
+				{
+					_node = nodeDataPair.first;
+					_property = i;
+
+					std::cout << "Mouse down on node: " << nodeDataPair.first << ", input property: " << i << std::endl;
+
+					return true;
+				}
+			}
+		}
+		else
+		{
+			for (int i = 0; i < nodeTemplate.getOutputsCount(); ++i)
+			{
+				auto jointRegion = nodeTemplate.getOutputJointRegion(i, *nodeViewerCamera, nodeData);
+				if (circleContainsPoint(jointRegion, _position))
+				{
+					dragType = DragType::OUTPUTJOINT;
+					_node = nodeDataPair.first;
+					_property = i;
+
+					std::cout << "Mouse down on node: " << nodeDataPair.first << ", output property: " << i << std::endl;
+
+					return true;
+				}
+			}
+		}
+		
+		
+	}
+
+	return false;
+}
+
+void NodeEditor::mouseUpdate(const sf::Vector2f & _pos)
+{
+	sf::Vector2f worldPos = nodeViewerCamera->getTransform().getInverse().transformPoint(_pos - dragInitialOffset);
+
+	switch (dragType)
+	{
+	case DragType::NODEDATA:
+		if (nodeDataDragID != -1)
+		{
+			nodeDatas[nodeDataDragID]->position = worldPos;
+		}
+		break;
+
+	case DragType::INPUTJOINT:
+
+		break;
+
+	case DragType::OUTPUTJOINT:
+
+		break;
+	}
 }
 
 NodeEditor::NodeEditor()
@@ -228,8 +377,23 @@ void NodeEditor::start()
 			{
 				scrollDelta = event.mouseWheelScroll.delta;
 			}
-
+			else if (event.type == sf::Event::MouseButtonPressed)
+			{
+				if (event.mouseButton.button == 0)
+				{
+					mouseDown(sf::Vector2f{ (float)event.mouseButton.x, (float)event.mouseButton.y });
+				}
+			}
+			else if (event.type == sf::Event::MouseButtonReleased)
+			{
+				if (event.mouseButton.button == 0)
+				{
+					mouseUp(sf::Vector2f{ (float)event.mouseButton.x, (float)event.mouseButton.y });
+				}
+			}
 		}
+
+		mouseUpdate(ImGui::GetMousePos());
 
 
 		//SETUP
