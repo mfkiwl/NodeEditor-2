@@ -17,14 +17,29 @@ NodeData::~NodeData()
 
 nlohmann::json NodeData::serialise() const
 {
-	nlohmann::json nodeConnectionsJson;
+	nlohmann::json inputNodeConnectionsJson;
 
-	for (int i = 0; i < nodeConnections.size(); ++i)
+	for (auto & connection : inputConnections)
 	{
-		nodeConnectionsJson[i] = nodeConnections[i].serialise();
+		inputNodeConnectionsJson.push_back({ { "propertyIndex", connection.first }, { "connection", connection.second.serialise() } });
 	}
 
-	return { { "id", id }, { "nodeTemplateID", nodeTemplateID }, { "position", position }, { "nodeConnections", nodeConnectionsJson } };
+
+	nlohmann::json outputNodeConnectionsJson;
+
+	for (auto & connection : outputConnections)
+	{
+		outputNodeConnectionsJson.push_back({ { "propertyIndex", connection.first }, { "connection", connection.second.serialise() } });
+	}
+
+
+	return { 
+		{ "id", id },
+		{ "nodeTemplateID", nodeTemplateID },
+		{ "position", position },
+		{ "inputNodeConnections", inputNodeConnectionsJson },
+		{ "outputNodeConnections", outputNodeConnectionsJson } 
+	};
 }
 
 NodeData NodeData::deserialise(const nlohmann::json & _j)
@@ -32,37 +47,52 @@ NodeData NodeData::deserialise(const nlohmann::json & _j)
 
 	NodeData constructed = NodeData(_j.at("id").get<int>(), _j.at("nodeTemplateID").get<int>(), _j.at("position").get<sf::Vector2f>());
 
-	nlohmann::json nodeConnectionsJson = _j.at("nodeConnections");
 
-	constructed.nodeConnections.resize(nodeConnectionsJson.size());
+	/*constructed.nodeConnections.resize(nodeConnectionsJson.size());*/
 
-	for (int i = 0; i < nodeConnectionsJson.size(); ++i)
+	/*for (int i = 0; i < nodeConnectionsJson.size(); ++i)
 	{
 		NodeConnection nodeConnectionDeserialised = NodeConnection::deserialise(nodeConnectionsJson[i]);
 		constructed.nodeConnections[i] = nodeConnectionDeserialised;
+	}*/
+
+	nlohmann::json inputNodeConnectionsJson = _j.at("inputNodeConnections");
+
+	for (auto & connectionJson : inputNodeConnectionsJson)
+	{
+		constructed.inputConnections[connectionJson.at("propertyIndex").get<int>()] = NodeConnection::deserialise(connectionJson.at("connection"));
+	}
+
+
+	nlohmann::json outputNodeConnectionsJson = _j.at("outputNodeConnections");
+
+	for (auto & connectionJson : outputNodeConnectionsJson)
+	{
+		constructed.outputConnections.emplace(std::pair<int, NodeConnection>{ connectionJson.at("propertyIndex").get<int>(), NodeConnection::deserialise(connectionJson.at("connection")) });
+		//constructed.outputConnections[connectionJson.at("propertyIndex").get<int>()] = NodeConnection::deserialise(connectionJson.at("connection"));
 	}
 
 	return constructed;
 }
 
-NodeConnection::NodeConnection() : thisNodeID(-1), thisNodeOutputPropertyIndex(-1), otherNodeID(-1), otherNodeInputPropertyIndex(-1)
+NodeConnection::NodeConnection() : startNodeID(-1), startNodeOutputPropertyIndex(-1), endNodeID(-1), endNodeInputPropertyIndex(-1)
 {
 }
 
 NodeConnection::NodeConnection(int _thisNodeID, int _thisNodeOutputPropertyIndex, int _otherNodeID, int _otherNodeInputPropertyIndex) :
-	thisNodeID(_thisNodeID),
-	thisNodeOutputPropertyIndex(_thisNodeOutputPropertyIndex),
-	otherNodeID(_otherNodeID), 
-	otherNodeInputPropertyIndex(_otherNodeInputPropertyIndex)
+	startNodeID(_thisNodeID),
+	startNodeOutputPropertyIndex(_thisNodeOutputPropertyIndex),
+	endNodeID(_otherNodeID), 
+	endNodeInputPropertyIndex(_otherNodeInputPropertyIndex)
 {
 }
 
 nlohmann::json NodeConnection::serialise() const
 {
-	return { { "thisNode", thisNodeID }, { "thisNodeOutputPropertyIndex", thisNodeOutputPropertyIndex }, { "otherNode", otherNodeID }, { "otherNodeInputPropertyIndex", otherNodeInputPropertyIndex } };
+	return { { "startNode", startNodeID }, { "startNodeOutputPropertyIndex", startNodeOutputPropertyIndex }, { "endNode", endNodeID }, { "endNodeInputPropertyIndex", endNodeInputPropertyIndex } };
 }
 
 NodeConnection NodeConnection::deserialise(const nlohmann::json & _j)
 {
-	return NodeConnection(_j.at("thisNode").get<int>(), _j.at("thisNodeOutputPropertyIndex").get<int>(), _j.at("otherNode").get<int>(), _j.at("otherNodeInputPropertyIndex").get<int>());
+	return NodeConnection(_j.at("startNode").get<int>(), _j.at("startNodeOutputPropertyIndex").get<int>(), _j.at("endNode").get<int>(), _j.at("endNodeInputPropertyIndex").get<int>());
 }

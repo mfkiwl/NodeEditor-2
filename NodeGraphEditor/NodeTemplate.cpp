@@ -21,7 +21,7 @@ NodeTemplate::~NodeTemplate()
 {
 }
 
-void NodeTemplate::draw(ImDrawList * _drawList, Camera & _camera, const NodeData & _data)
+void NodeTemplate::draw(ImDrawList * _drawList, Camera & _camera, const NodeData & _data, bool _isSelection)
 {
 	recalculateSize();
 
@@ -44,7 +44,14 @@ void NodeTemplate::draw(ImDrawList * _drawList, Camera & _camera, const NodeData
 	_drawList->AddRectFilled(rectStart, titleEnd, ImColor(style.Colors[ImGuiCol_TitleBgActive]), 5.0f * scale);
 
 	//Main Border
-	_drawList->AddRect(rectStart, rectEnd, ImColor(style.Colors[ImGuiCol_Border]), 5.0f * scale);
+	if (_isSelection)
+	{
+		_drawList->AddRect(rectStart, rectEnd, ImColor(style.Colors[ImGuiCol_Text]), 5.0f * scale, 15, 2.0f);
+	}
+	else
+	{
+		_drawList->AddRect(rectStart, rectEnd, ImColor(style.Colors[ImGuiCol_Border]), 5.0f * scale);
+	}
 
 	//Title Border
 	_drawList->AddRect(rectStart, titleEnd, ImColor(style.Colors[ImGuiCol_Border]), 5.0f * scale);
@@ -99,13 +106,16 @@ void NodeTemplate::drawProperties(ImDrawList * _drawList, Camera & _camera, cons
 
 void NodeTemplate::drawNodeConnections(ImDrawList * _drawList, Camera & _camera, const NodeData & _data) const
 {
-	for (const NodeConnection & connection : _data.nodeConnections)
+	for (auto & connectionPair : _data.outputConnections)
 	{
-		const NodeData & otherNodeData = Program::get().getNodeData(connection.otherNodeID);
+		const NodeConnection & connection = connectionPair.second;
+
+
+		const NodeData & otherNodeData = Program::get().getNodeData(connection.endNodeID);
 		const NodeTemplate & otherNodeTemplate = Program::get().getNodeTemplate(otherNodeData.nodeTemplateID);
 
-		sf::Vector2f startPos = getOutputJointCircleRegion(connection.thisNodeOutputPropertyIndex, _camera, _data).first;
-		sf::Vector2f endPos = otherNodeTemplate.getInputJointCircleRegion(connection.otherNodeInputPropertyIndex, _camera, otherNodeData).first;
+		sf::Vector2f startPos = getOutputJointCircleRegion(connection.startNodeOutputPropertyIndex, _camera, _data).first;
+		sf::Vector2f endPos = otherNodeTemplate.getInputJointCircleRegion(connection.endNodeInputPropertyIndex, _camera, otherNodeData).first;
 
 		/*auto c1 = startPos + 0.3f * (endPos - startPos);
 		c1.y = startPos.y;
@@ -115,7 +125,7 @@ void NodeTemplate::drawNodeConnections(ImDrawList * _drawList, Camera & _camera,
 
 		_drawList->AddBezierCurve(startPos, c1, c2, endPos, IM_COL32_WHITE, 1.f);*/
 
-		drawConnectionRaw(_drawList, _camera, startPos, endPos, outputs[connection.thisNodeOutputPropertyIndex].type);
+		drawConnectionRaw(_drawList, _camera, startPos, endPos, outputs[connection.startNodeOutputPropertyIndex].type);
 	}
 }
 
@@ -205,12 +215,12 @@ sf::FloatRect NodeTemplate::getOutputJointRegion(int propertyIndex, const Camera
 
 int NodeTemplate::getInputsCount() const
 {
-	return inputs.size();
+	return (int)inputs.size();
 }
 
 int NodeTemplate::getOutputsCount() const
 {
-	return outputs.size();
+	return (int)outputs.size();
 }
 
 const Property & NodeTemplate::getInputProperty(int _inputPropertyIndex) const

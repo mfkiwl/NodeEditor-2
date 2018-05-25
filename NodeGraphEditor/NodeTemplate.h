@@ -38,7 +38,7 @@ public:
 	NodeTemplate(int _id, const std::string & _name, const std::vector<Property> & _inputs, const std::vector<Property> & _outputs);
 	~NodeTemplate();
 
-	void draw(ImDrawList * _drawList, Camera & _camera, const NodeData & _data);
+	void draw(ImDrawList * _drawList, Camera & _camera, const NodeData & _data, bool _isSelection);
 
 	void recalculateSize();
 

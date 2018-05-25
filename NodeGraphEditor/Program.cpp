@@ -8,6 +8,7 @@
 //TODO: REMOVE:
 #include <iostream>
 
+#include <algorithm>
 #include <fstream>
 #include "json.hpp"
 
@@ -275,7 +276,7 @@ void Program::drawWindowNodeViewer()
 				const NodeData & nodeData = *nodeDataPair.second;
 				NodeTemplate & nodeTemplate = *nodeTemplates[nodeData.nodeTemplateID];
 
-				nodeTemplate.draw(drawList, *nodeViewerCamera, nodeData);
+				nodeTemplate.draw(drawList, *nodeViewerCamera, nodeData, nodeDataPair.first == nodeDataSelection);
 			}
 		}
 
@@ -305,10 +306,28 @@ void Program::mouseDown(const sf::Vector2f & _pos)
 	if (doesScreenPositionCollideWithNode(nodeDataDragID, dragInitialOffset, _pos))
 	{
 		dragType = DragType::NODEDATA;
+		nodeDataSelection = nodeDataDragID;
 	}
 	else if (doesScreenPositionCollideWithJoint(inputTempNodeDataDragID, inputTempPropertyDragID, _pos, true))
 	{
 		//If there is a connection ending at this property then delete and start dragging this connection
+		
+		auto & inputConnections = nodeDatas[inputTempNodeDataDragID]->inputConnections;
+		auto itr = inputConnections.find(inputTempPropertyDragID);
+		if (itr != inputConnections.end())
+		{
+			//Found a connection
+			//Delete it and start dragging
+
+			nodeDataDragID = itr->second.startNodeID;
+			propertyIDDrag = itr->second.startNodeOutputPropertyIndex;
+
+			tryDisconnectNodes(itr->second.startNodeID, itr->second.startNodeOutputPropertyIndex, itr->second.endNodeID, itr->second.endNodeInputPropertyIndex);
+
+			dragType = DragType::CONNECTION;
+		}
+		
+
 /*
 		std::vector<NodeConnection> & connections = nodeDatas[inputTempNodeDataDragID]->nodeConnections;
 		
@@ -335,8 +354,11 @@ void Program::mouseUp(const sf::Vector2f & _pos)
 		int newPropertyID = -1;
 		if (doesScreenPositionCollideWithJoint(newNodeID, newPropertyID, _pos, true))
 		{
+			tryConnectNodes(nodeDataDragID, propertyIDDrag, newNodeID, newPropertyID);
 
-			nodeDatas[nodeDataDragID]->nodeConnections.push_back(NodeConnection{ nodeDataDragID, propertyIDDrag, newNodeID, newPropertyID });
+
+			//nodeDatas[nodeDataDragID]->outputConnections[propertyIDDrag] = NodeConnection{ nodeDataDragID, propertyIDDrag, newNodeID, newPropertyID };
+			//nodeDatas[nodeDataDragID]->outputConnections.push_back(NodeConnection{ nodeDataDragID, propertyIDDrag, newNodeID, newPropertyID });
 
 		}
 	}
@@ -458,6 +480,65 @@ Program::~Program()
 {
 }
 
+bool Program::tryConnectNodes(int _startNode, int _startPropertyIndex, int _endNode, int _endPropertyIndex)
+{
+	//Can't connect node to itself
+	if (_startNode == _endNode)
+	{
+		return false;
+	}
+
+	//Can't connect different types
+	auto startTemplate = nodeTemplates[nodeDatas[_startNode]->nodeTemplateID];
+	auto endTemplate = nodeTemplates[nodeDatas[_endNode]->nodeTemplateID];
+	if (startTemplate->getOutputProperty(_startPropertyIndex).type != endTemplate->getInputProperty(_endPropertyIndex).type)
+	{
+		return false;
+	}
+
+	//See if something is already connected to the end node input property
+	auto itr = nodeDatas[_endNode]->inputConnections.find(_endPropertyIndex);
+	if (itr != nodeDatas[_endNode]->inputConnections.end())
+	{
+		//Disconnect first
+		auto connection = itr->second;
+		tryDisconnectNodes(connection.startNodeID, connection.startNodeOutputPropertyIndex, connection.endNodeID, connection.endNodeInputPropertyIndex);
+	}
+
+	nodeDatas[_startNode]->outputConnections.emplace(std::pair<int, NodeConnection>{_startPropertyIndex, NodeConnection{ _startNode, _startPropertyIndex, _endNode, _endPropertyIndex }});
+	nodeDatas[_endNode]->inputConnections[_endPropertyIndex] = NodeConnection{ _startNode, _startPropertyIndex, _endNode, _endPropertyIndex };
+
+
+	return true;
+}
+
+void Program::tryDisconnectNodes(int _startNode, int _startPropertyIndex, int _endNode, int _endPropertyIndex)
+{
+	//Find the right output connection
+	auto & outputConnections = nodeDatas[_startNode]->outputConnections;
+	auto itr = std::find_if(outputConnections.begin(), outputConnections.end(), [_endNode, _endPropertyIndex](std::pair<int, NodeConnection> _connection) {
+		return _connection.second.endNodeID == _endNode &&
+			_connection.second.endNodeInputPropertyIndex == _endPropertyIndex;
+	});
+
+	if (itr != outputConnections.end())
+	{
+		outputConnections.erase(itr);
+	}
+
+	nodeDatas[_endNode]->inputConnections.erase(_endPropertyIndex);
+}
+
+void Program::deleteAllConnections(int _nodeID)
+{
+	auto & nodeData = nodeDatas[_nodeID];
+	//Outputs first
+	for (auto itr = nodeData->outputConnections.begin(); itr != nodeData->outputConnections.end(); ++itr)
+	{
+
+	}
+}
+
 void Program::start()
 {
 	sf::RenderWindow & window = *(sfmlWindow = new sf::RenderWindow(sf::VideoMode(1280, 768), "Node Graph Editor"));
@@ -495,6 +576,15 @@ void Program::start()
 				if (event.mouseButton.button == 0)
 				{
 					mouseUp(sf::Vector2f{ (float)event.mouseButton.x, (float)event.mouseButton.y });
+				}
+			}
+			else if (event.type == sf::Event::KeyPressed)
+			{
+				if (event.key.code == sf::Keyboard::Key::Delete)
+				{
+					//TODO: also delete node connections
+					nodeDatas.erase(nodeDataSelection);
+					nodeDataSelection = -1;
 				}
 			}
 		}

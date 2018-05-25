@@ -66,6 +66,13 @@ private:
 	sf::Vector2f dragInitialOffset{ 0, 0 };
 
 
+	bool tryConnectNodes(int _startNode, int _startPropertyIndex, int _endNode, int _endPropertyIndex);
+	void tryDisconnectNodes(int _startNode, int _startPropertyIndex, int _endNode, int _endPropertyIndex);
+
+	void deleteAllConnections(int _nodeID);
+
+	int nodeDataSelection = -1;
+
 public:
 
 	void start();
