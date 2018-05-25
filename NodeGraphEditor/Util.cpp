@@ -16,5 +16,10 @@ void drawConnectionRaw(ImDrawList * _drawList, Camera & _camera, const sf::Vecto
 	auto c2 = _startPos + 0.3f * (_endPos - _startPos);
 	c2.y = _endPos.y;
 
-	_drawList->AddBezierCurve(_startPos, c1, c2, _endPos, ImColor::HSV(0.5f, 1.0f, 1.0f), 1.f);
+	_drawList->AddBezierCurve(_startPos, c1, c2, _endPos, getConnectionColor(_connectionType), 1.f);
+}
+
+ImU32 getConnectionColor(int _connectionType)
+{
+	return ImColor::HSV(_connectionType / 20.0f, 1.0f, 1.0f);
 }

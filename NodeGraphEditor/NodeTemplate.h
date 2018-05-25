@@ -45,11 +45,17 @@ public:
 	sf::FloatRect getHeaderRegion(const Camera & _camera, const NodeData & _data) const;
 
 	/// first: position, second: radius
-	std::pair<sf::Vector2f, float> getInputJointRegion(int propertyIndex, const Camera & _camera, const NodeData & _data) const;
+	std::pair<sf::Vector2f, float> getInputJointCircleRegion(int propertyIndex, const Camera & _camera, const NodeData & _data) const;
 	/// first: position, second: radius
-	std::pair<sf::Vector2f, float> getOutputJointRegion(int propertyIndex, const Camera & _camera, const NodeData & _data) const;
+	std::pair<sf::Vector2f, float> getOutputJointCircleRegion(int propertyIndex, const Camera & _camera, const NodeData & _data) const;
+
+	sf::FloatRect getInputJointRegion(int propertyIndex, const Camera & _camera, const NodeData & _data) const;
+	sf::FloatRect getOutputJointRegion(int propertyIndex, const Camera & _camera, const NodeData & _data) const;
 
 	int getInputsCount() const;
 	int getOutputsCount() const;
+
+	const Property & getInputProperty(int _inputPropertyIndex) const;
+	const Property & getOutputProperty(int _outputPropertyIndex) const;
 };
 

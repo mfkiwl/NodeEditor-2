@@ -2,7 +2,7 @@
 
 
 
-Property::Property(const std::string & _name) : name(_name)
+Property::Property(const std::string & _name, int _type) : name(_name), type(_type)
 {
 }
 

@@ -50,22 +50,22 @@ void Program::load()
 	nodeTemplates[5] = std::make_shared<NodeTemplate>(5,
 		"Crazy Operation", 
 		std::vector<Property>{
-			Property("Input 1"),
-			Property("Input Thing 2")
+			Property("Input 1", 0),
+			Property("Input Thing 2", 1)
 		}, 
 		std::vector<Property>{
-			Property("Ouput 1"),
-			Property("Output Thing 2"),
-			Property("An Output 3")
+			Property("Ouput 1", 0),
+			Property("Output Thing 2", 1),
+			Property("An Output 3", 2)
 		});
 	nodeTemplates[9] = std::make_shared<NodeTemplate>(9,
 		"Add",
 		std::vector<Property>{
-			Property("Input 1"),
-			Property("Input 2")
+			Property("Input 1", 0),
+			Property("Input 2", 1)
 		},
 		std::vector<Property>{
-			Property("Ouput 1")
+			Property("Ouput 1", 2)
 		});
 
 
@@ -284,13 +284,13 @@ void Program::drawWindowNodeViewer()
 
 
 		//Draw temporary connections to mouse position
-		if (dragType == DragType::OUTPUTJOINT)
+		if (dragType == DragType::CONNECTION)
 		{
 			const NodeData & nodeData = *nodeDatas[nodeDataDragID];
 			NodeTemplate & nodeTemplate = *nodeTemplates[nodeData.nodeTemplateID];
 
-			auto startPos = nodeTemplate.getOutputJointRegion(propertyIDDrag, *nodeViewerCamera, nodeData).first;
-			drawConnectionRaw(drawList, *nodeViewerCamera, startPos, ImGui::GetMousePos(), 0);
+			auto startPos = nodeTemplate.getOutputJointCircleRegion(propertyIDDrag, *nodeViewerCamera, nodeData).first;
+			drawConnectionRaw(drawList, *nodeViewerCamera, startPos, ImGui::GetMousePos(), nodeTemplate.getOutputProperty(propertyIDDrag).type);
 		}
 	}
 	ImGui::End();
@@ -298,24 +298,38 @@ void Program::drawWindowNodeViewer()
 
 void Program::mouseDown(const sf::Vector2f & _pos)
 {
+	int inputTempNodeDataDragID = -1;
+	int inputTempPropertyDragID = -1;
+
+
 	if (doesScreenPositionCollideWithNode(nodeDataDragID, dragInitialOffset, _pos))
 	{
 		dragType = DragType::NODEDATA;
 	}
-	else if (doesScreenPositionCollideWithJoint(nodeDataDragID, propertyIDDrag, _pos, true))
+	else if (doesScreenPositionCollideWithJoint(inputTempNodeDataDragID, inputTempPropertyDragID, _pos, true))
 	{
-		dragType = DragType::INPUTJOINT;
+		//If there is a connection ending at this property then delete and start dragging this connection
+/*
+		std::vector<NodeConnection> & connections = nodeDatas[inputTempNodeDataDragID]->nodeConnections;
+		
+		bool foundConnection = false;
+		for (NodeConnection & connection : connections)
+		{
+			if (connection.)
+		}*/
+
+		//dragType = DragType::CONNECTION;
 	}
 	else if (doesScreenPositionCollideWithJoint(nodeDataDragID, propertyIDDrag, _pos, false))
 	{
-		dragType = DragType::OUTPUTJOINT;
+		dragType = DragType::CONNECTION;
 	}
 }
 
 void Program::mouseUp(const sf::Vector2f & _pos)
 {
 	//Check for attaching joints output->input
-	if (dragType == DragType::OUTPUTJOINT)
+	if (dragType == DragType::CONNECTION)
 	{
 		int newNodeID = -1;
 		int newPropertyID = -1;
@@ -373,8 +387,12 @@ bool Program::doesScreenPositionCollideWithJoint(int & _node, int & _property, c
 		{
 			for (int i = 0; i < nodeTemplate.getInputsCount(); ++i)
 			{
+				//auto jointRegion = nodeTemplate.getInputJointCircleRegion(i, *nodeViewerCamera, nodeData);
+				//if (circleContainsPoint(jointRegion, _position))
+
+
 				auto jointRegion = nodeTemplate.getInputJointRegion(i, *nodeViewerCamera, nodeData);
-				if (circleContainsPoint(jointRegion, _position))
+				if (jointRegion.contains(_position))
 				{
 					_node = nodeDataPair.first;
 					_property = i;
@@ -389,10 +407,13 @@ bool Program::doesScreenPositionCollideWithJoint(int & _node, int & _property, c
 		{
 			for (int i = 0; i < nodeTemplate.getOutputsCount(); ++i)
 			{
+				//auto jointRegion = nodeTemplate.getOutputJointCircleRegion(i, *nodeViewerCamera, nodeData);
+				//if (circleContainsPoint(jointRegion, _position))
+
+
 				auto jointRegion = nodeTemplate.getOutputJointRegion(i, *nodeViewerCamera, nodeData);
-				if (circleContainsPoint(jointRegion, _position))
+				if (jointRegion.contains(_position))
 				{
-					dragType = DragType::OUTPUTJOINT;
 					_node = nodeDataPair.first;
 					_property = i;
 
@@ -422,11 +443,7 @@ void Program::mouseUpdate(const sf::Vector2f & _pos)
 		}
 		break;
 
-	case DragType::INPUTJOINT:
-
-		break;
-
-	case DragType::OUTPUTJOINT:
+	case DragType::CONNECTION:
 
 		break;
 	}

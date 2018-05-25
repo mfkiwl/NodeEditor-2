@@ -75,7 +75,9 @@ void NodeTemplate::drawProperties(ImDrawList * _drawList, Camera & _camera, cons
 		_drawList->AddText(ImGui::GetFont(), getNodeFontSize(_camera), propertyStart, ImColor(style.Colors[ImGuiCol_Text]), p.name.c_str());
 
 		//Property joint
-		_drawList->AddCircleFilled(getInputJointRegion(i, _camera, _data).first, NODE_PADDING * scale, ImColor(style.Colors[ImGuiCol_Text]));
+		auto inputJointCircle = getInputJointCircleRegion(i, _camera, _data);
+		_drawList->AddCircleFilled(inputJointCircle.first, inputJointCircle.second * 1.1f, ImColor(style.Colors[ImGuiCol_Text]));
+		_drawList->AddCircleFilled(inputJointCircle.first, inputJointCircle.second, getConnectionColor(p.type));
 	}
 
 	//Outputs
@@ -89,7 +91,9 @@ void NodeTemplate::drawProperties(ImDrawList * _drawList, Camera & _camera, cons
 		_drawList->AddText(ImGui::GetFont(), getNodeFontSize(_camera), propertyStart, ImColor(style.Colors[ImGuiCol_Text]), p.name.c_str());
 
 		//Property joint
-		_drawList->AddCircleFilled(getOutputJointRegion(i, _camera, _data).first, NODE_PADDING * scale, ImColor(style.Colors[ImGuiCol_Text]));
+		auto outputJointCircle = getOutputJointCircleRegion(i, _camera, _data);
+		_drawList->AddCircleFilled(outputJointCircle.first, outputJointCircle.second * 1.1f, ImColor(style.Colors[ImGuiCol_Text]));
+		_drawList->AddCircleFilled(outputJointCircle.first, outputJointCircle.second, getConnectionColor(p.type));
 	}
 }
 
@@ -100,8 +104,8 @@ void NodeTemplate::drawNodeConnections(ImDrawList * _drawList, Camera & _camera,
 		const NodeData & otherNodeData = Program::get().getNodeData(connection.otherNodeID);
 		const NodeTemplate & otherNodeTemplate = Program::get().getNodeTemplate(otherNodeData.nodeTemplateID);
 
-		sf::Vector2f startPos = getOutputJointRegion(connection.thisNodeOutputPropertyIndex, _camera, _data).first;
-		sf::Vector2f endPos = otherNodeTemplate.getInputJointRegion(connection.otherNodeInputPropertyIndex, _camera, otherNodeData).first;
+		sf::Vector2f startPos = getOutputJointCircleRegion(connection.thisNodeOutputPropertyIndex, _camera, _data).first;
+		sf::Vector2f endPos = otherNodeTemplate.getInputJointCircleRegion(connection.otherNodeInputPropertyIndex, _camera, otherNodeData).first;
 
 		/*auto c1 = startPos + 0.3f * (endPos - startPos);
 		c1.y = startPos.y;
@@ -111,7 +115,7 @@ void NodeTemplate::drawNodeConnections(ImDrawList * _drawList, Camera & _camera,
 
 		_drawList->AddBezierCurve(startPos, c1, c2, endPos, IM_COL32_WHITE, 1.f);*/
 
-		drawConnectionRaw(_drawList, _camera, startPos, endPos, 0);
+		drawConnectionRaw(_drawList, _camera, startPos, endPos, outputs[connection.thisNodeOutputPropertyIndex].type);
 	}
 }
 
@@ -163,7 +167,7 @@ sf::FloatRect NodeTemplate::getHeaderRegion(const Camera & _camera, const NodeDa
 	return sf::FloatRect{ rectStart, titleEnd - rectStart };
 }
 
-std::pair<sf::Vector2f, float> NodeTemplate::getInputJointRegion(int propertyIndex, const Camera & _camera, const NodeData & _data) const
+std::pair<sf::Vector2f, float> NodeTemplate::getInputJointCircleRegion(int propertyIndex, const Camera & _camera, const NodeData & _data) const
 {
 	auto contentStartLocal = _data.position + sf::Vector2f{ NODE_PADDING, lineHeight + NODE_PADDING * 3.f };
 	auto propertyStartLocal = contentStartLocal + sf::Vector2f{ 0, propertyIndex * (lineHeight + NODE_PADDING) };
@@ -172,13 +176,31 @@ std::pair<sf::Vector2f, float> NodeTemplate::getInputJointRegion(int propertyInd
 	return { propertyStart, NODE_PADDING * _camera.getScale() };
 }
 
-std::pair<sf::Vector2f, float> NodeTemplate::getOutputJointRegion(int propertyIndex, const Camera & _camera, const NodeData & _data) const
+std::pair<sf::Vector2f, float> NodeTemplate::getOutputJointCircleRegion(int propertyIndex, const Camera & _camera, const NodeData & _data) const
 {
 	auto contentStartLocalRight = _data.position + sf::Vector2f{ size.x - NODE_PADDING, lineHeight + NODE_PADDING * 3.f };
 	auto propertyStartLocalRight = contentStartLocalRight + sf::Vector2f{ 0, propertyIndex * (lineHeight + NODE_PADDING) };
 	auto propertyStartRight = _camera.getTransform().transformPoint(propertyStartLocalRight + sf::Vector2f{ 0, lineHeight / 2.f });
 
 	return { propertyStartRight, NODE_PADDING * _camera.getScale() };
+}
+
+sf::FloatRect NodeTemplate::getInputJointRegion(int propertyIndex, const Camera & _camera, const NodeData & _data) const
+{
+	auto inputJointCircle = getInputJointCircleRegion(propertyIndex, _camera, _data);
+	return sf::FloatRect{ 
+		inputJointCircle.first - 1.5f * sf::Vector2f{inputJointCircle.second, inputJointCircle.second},
+		3.0f * sf::Vector2f{ inputJointCircle.second, inputJointCircle.second }
+	};
+}
+
+sf::FloatRect NodeTemplate::getOutputJointRegion(int propertyIndex, const Camera & _camera, const NodeData & _data) const
+{
+	auto outputJointCircle = getOutputJointCircleRegion(propertyIndex, _camera, _data);
+	return sf::FloatRect{
+		outputJointCircle.first - 1.5f * sf::Vector2f{ outputJointCircle.second, outputJointCircle.second },
+		3.0f * sf::Vector2f{ outputJointCircle.second, outputJointCircle.second }
+	};
 }
 
 int NodeTemplate::getInputsCount() const
@@ -189,6 +211,16 @@ int NodeTemplate::getInputsCount() const
 int NodeTemplate::getOutputsCount() const
 {
 	return outputs.size();
+}
+
+const Property & NodeTemplate::getInputProperty(int _inputPropertyIndex) const
+{
+	return inputs[_inputPropertyIndex];
+}
+
+const Property & NodeTemplate::getOutputProperty(int _outputPropertyIndex) const
+{
+	return outputs[_outputPropertyIndex];
 }
 
 float NodeTemplate::getNodeFontSize(Camera & _camera)

@@ -59,8 +59,7 @@ private:
 	{
 		NONE,
 		NODEDATA,
-		INPUTJOINT,
-		OUTPUTJOINT
+		CONNECTION
 	} dragType;
 	int nodeDataDragID = -1;
 	int propertyIDDrag = -1;
