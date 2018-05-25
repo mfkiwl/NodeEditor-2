@@ -529,13 +529,45 @@ void Program::tryDisconnectNodes(int _startNode, int _startPropertyIndex, int _e
 	nodeDatas[_endNode]->inputConnections.erase(_endPropertyIndex);
 }
 
+void Program::disconnectInputGivenOutput(NodeConnection & _outputConnection)
+{
+	//This is output so disconnect input
+	auto endNode = nodeDatas[_outputConnection.endNodeID];
+	endNode->inputConnections.erase(_outputConnection.endNodeInputPropertyIndex);
+}
+
+void Program::disconnectOutputGivenInput(NodeConnection & _inputConnection)
+{
+	//This is input so disconnect output
+	auto startNode = nodeDatas[_inputConnection.startNodeID];
+
+	//Find the right output connection
+	auto & outputConnections = startNode->outputConnections;
+	auto itr = std::find_if(outputConnections.begin(), outputConnections.end(), [_inputConnection](std::pair<int, NodeConnection> _connection) {
+		return _connection.second.endNodeID == _inputConnection.endNodeID &&
+			_connection.second.endNodeInputPropertyIndex == _inputConnection.endNodeInputPropertyIndex;
+	});
+
+
+	outputConnections.erase(itr);
+}
+
 void Program::deleteAllConnections(int _nodeID)
 {
 	auto & nodeData = nodeDatas[_nodeID];
-	//Outputs first
+
+	//Outputs
 	for (auto itr = nodeData->outputConnections.begin(); itr != nodeData->outputConnections.end(); ++itr)
 	{
+		disconnectInputGivenOutput(itr->second);
+		//nodeData->outputConnections.erase(itr->first);
+	}
 
+	//Inputs
+	for (auto itr = nodeData->inputConnections.begin(); itr != nodeData->inputConnections.end(); ++itr)
+	{
+		disconnectOutputGivenInput(itr->second);
+		//nodeData->inputConnections.erase(itr->first);
 	}
 }
 
@@ -582,7 +614,7 @@ void Program::start()
 			{
 				if (event.key.code == sf::Keyboard::Key::Delete)
 				{
-					//TODO: also delete node connections
+					deleteAllConnections(nodeDataSelection);
 					nodeDatas.erase(nodeDataSelection);
 					nodeDataSelection = -1;
 				}

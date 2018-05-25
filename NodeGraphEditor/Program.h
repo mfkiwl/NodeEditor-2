@@ -12,6 +12,7 @@
 class NodeTemplate;
 class NodeData;
 class Camera;
+class NodeConnection;
 
 class Program
 {
@@ -68,6 +69,8 @@ private:
 
 	bool tryConnectNodes(int _startNode, int _startPropertyIndex, int _endNode, int _endPropertyIndex);
 	void tryDisconnectNodes(int _startNode, int _startPropertyIndex, int _endNode, int _endPropertyIndex);
+	void disconnectInputGivenOutput(NodeConnection & _outputConnection);
+	void disconnectOutputGivenInput(NodeConnection & _inputConnection);
 
 	void deleteAllConnections(int _nodeID);
 
