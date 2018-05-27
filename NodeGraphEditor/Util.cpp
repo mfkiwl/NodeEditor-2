@@ -1,5 +1,7 @@
 #include "Util.h"
 
+#include "Program.h"
+
 bool circleContainsPoint(std::pair<sf::Vector2f, float> _circle, sf::Vector2f _point)
 {
 	sf::Vector2f del = _point - _circle.first;
@@ -21,5 +23,5 @@ void drawConnectionRaw(ImDrawList * _drawList, Camera & _camera, const sf::Vecto
 
 ImU32 getConnectionColor(int _connectionType)
 {
-	return ImColor::HSV(_connectionType / 20.0f, 1.0f, 1.0f);
+	return ImColor::HSV(_connectionType / (float)Program::get().propertyTypeCount, 1.0f, 1.0f);
 }

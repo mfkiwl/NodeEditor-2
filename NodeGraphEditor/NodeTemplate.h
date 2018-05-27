@@ -2,6 +2,7 @@
 
 #include <SFML\Graphics.hpp>
 #include "imgui\imgui.h"
+#include "json.hpp"
 
 #include <vector>
 #include <string>
@@ -13,7 +14,7 @@ class NodeData;
 
 class NodeTemplate
 {
-private:
+public:
 	//Serialised
 	int id;
 	std::string name;
@@ -37,6 +38,11 @@ private:
 public:
 	NodeTemplate(int _id, const std::string & _name, const std::vector<Property> & _inputs, const std::vector<Property> & _outputs);
 	~NodeTemplate();
+
+
+	nlohmann::json serialise() const;
+	static NodeTemplate deserialise(const nlohmann::json & _j);
+
 
 	void draw(ImDrawList * _drawList, Camera & _camera, const NodeData & _data, bool _isSelection);
 

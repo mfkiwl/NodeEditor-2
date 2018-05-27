@@ -29,6 +29,49 @@ void Program::create()
 	instance = new Program();
 }
 
+void Program::loadData()
+{
+	using namespace nlohmann;
+	
+	json dataJson;
+
+	std::ifstream dataFile("data.json");
+
+	dataFile >> dataJson;
+
+	dataFile.close();
+
+	//LOAD PROPERTY COUNT
+	propertyTypeCount = dataJson.at("propertyTypeCount").get<int>();
+
+	//LOAD CONNECTION MATRIX
+	connectionMatrix.resize(propertyTypeCount);
+
+
+	auto & connectionMatrixJson = dataJson.at("connectionMatrix");
+	for (int i = 0; i < propertyTypeCount; ++i)
+	{
+		connectionMatrix[i].resize(propertyTypeCount);
+
+		auto & connectionSubMatrixJson = connectionMatrixJson[i];
+
+		for (int j = 0; j < propertyTypeCount; ++j)
+		{
+			connectionMatrix[i][j] = connectionSubMatrixJson[j].get<bool>();
+		}
+	}
+
+	//LOAD NODE TEMPLATES
+	auto & nodeTemplatesJson = dataJson.at("nodeTemplates");
+
+	for (auto & nodeTemplateJson : nodeTemplatesJson)
+	{
+		std::shared_ptr<NodeTemplate> deserialisedNodeTemplate = std::make_shared<NodeTemplate>(NodeTemplate::deserialise(nodeTemplateJson));
+
+		nodeTemplates[deserialisedNodeTemplate->id] = deserialisedNodeTemplate;
+	}
+}
+
 void Program::loadFonts()
 {
 	auto io = ImGui::GetIO();
@@ -42,13 +85,15 @@ void Program::loadFonts()
 
 void Program::load()
 {
+	loadData();
+
 	loadFonts();
 
 
 	nodeViewerCamera = new Camera();
 
 
-	nodeTemplates[5] = std::make_shared<NodeTemplate>(5,
+	/*nodeTemplates[5] = std::make_shared<NodeTemplate>(5,
 		"Crazy Operation", 
 		std::vector<Property>{
 			Property("Input 1", 0),
@@ -67,13 +112,13 @@ void Program::load()
 		},
 		std::vector<Property>{
 			Property("Ouput 1", 2)
-		});
+		});*/
 
-
+/*
 	nodeDatas[3] = std::make_shared<NodeData>(3, 5, sf::Vector2f{ 100, 100 });
 	nodeDatas[4] = std::make_shared<NodeData>(4, 5, sf::Vector2f{ 500, 100 });
 	nodeDatas[5] = std::make_shared<NodeData>(5, 9, sf::Vector2f{ 100, 500 });
-	nodeDatas[6] = std::make_shared<NodeData>(6, 9, sf::Vector2f{ 500, 500 });
+	nodeDatas[6] = std::make_shared<NodeData>(6, 9, sf::Vector2f{ 500, 500 });*/
 
 
 /*
@@ -139,13 +184,17 @@ void Program::save()
 
 void Program::drawMainMenu()
 {
-	if (ImGui::BeginMainMenuBar())
+	if (ImGui::BeginMenuBar())
 	{
 		if (ImGui::BeginMenu("File"))
 		{
-			ImGui::MenuItem("New");
+			if (ImGui::MenuItem("New"))
+			{
+				closeCurrent();
+			}
 			if (ImGui::MenuItem("Open"))
 			{
+				closeCurrent();
 				open();
 			}
 			if (ImGui::MenuItem("Save"))
@@ -158,21 +207,16 @@ void Program::drawMainMenu()
 			}
 			ImGui::EndMenu();
 		}
-
-		if (ImGui::BeginMenu("Options"))
-		{
-			ImGui::MenuItem("Settings");
-			ImGui::EndMenu();
-		}
-		ImGui::EndMainMenuBar();
+		ImGui::EndMenuBar();
 	}
 }
 
 void Program::drawWindowNodeList()
 {
-	////ImGui::SetNextWindowPos({ 0, 0 });
-	////ImGui::SetNextWindowSize({ 300, 200 });
-	ImGui::Begin("Node List");
+	ImGui::SetNextWindowPos({ 0, 0 });
+	ImGui::SetNextWindowSize({ sfmlWindow->getSize().x / 4.f, (float)sfmlWindow->getSize().y });
+
+	ImGui::Begin("Node List", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse);
 	ImGui::PushFont(uiFont);
 	//ImGui::Button("Example node 1");
 	//ImGui::Button("Example node 2");
@@ -181,7 +225,7 @@ void Program::drawWindowNodeList()
 	////ImGui::TreeNode("Category 2");
 	////ImGui::TreePop();
 
-	if (ImGui::TreeNode("Category 1"))
+	/*if (ImGui::TreeNode("Category 1"))
 	{
 		ImGui::Button("Example node 3");
 		ImGui::Button("Example node 4");
@@ -198,6 +242,15 @@ void Program::drawWindowNodeList()
 		ImGui::Button("Example node 10");
 
 		ImGui::TreePop();
+	}*/
+
+	for (auto & nodeTemplate : nodeTemplates)
+	{
+		if (ImGui::Button(nodeTemplate.second->name.c_str()))
+		{
+			int size = nodeDatas.size();
+			nodeDatas[size] = std::make_shared<NodeData>(size, nodeTemplate.second->id, nodePlacementPosition);
+		}
 	}
 
 	sf::Vector2f pos = ImGui::GetWindowPos();
@@ -214,8 +267,13 @@ void Program::drawWindowNodeList()
 
 void Program::drawWindowNodeViewer()
 {
-	if (ImGui::Begin("Node Editor", nullptr, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoMove))
+	ImGui::SetNextWindowPos({ sfmlWindow->getSize().x / 4.f, 0 });
+	ImGui::SetNextWindowSize({ 3.f * sfmlWindow->getSize().x / 4.f, (float)sfmlWindow->getSize().y });
+
+	if (ImGui::Begin("Node Editor", nullptr, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoCollapse))
 	{
+		drawMainMenu();
+
 		ImGui::PushFont(nodeHighResFont);
 
 		//Get position variables
@@ -252,6 +310,10 @@ void Program::drawWindowNodeViewer()
 
 		//Update camera
 		nodeViewerCamera->updateTransform();
+
+
+		//Find node placement posiiton for node list
+		nodePlacementPosition = nodeViewerCamera->getTransform().getInverse().transformPoint(windowSize / 2.0f);
 
 		
 		//Actually draw
@@ -491,7 +553,8 @@ bool Program::tryConnectNodes(int _startNode, int _startPropertyIndex, int _endN
 	//Can't connect different types
 	auto startTemplate = nodeTemplates[nodeDatas[_startNode]->nodeTemplateID];
 	auto endTemplate = nodeTemplates[nodeDatas[_endNode]->nodeTemplateID];
-	if (startTemplate->getOutputProperty(_startPropertyIndex).type != endTemplate->getInputProperty(_endPropertyIndex).type)
+	//if (startTemplate->getOutputProperty(_startPropertyIndex).type != endTemplate->getInputProperty(_endPropertyIndex).type)
+	if (!connectionMatrix[startTemplate->getOutputProperty(_startPropertyIndex).type][endTemplate->getInputProperty(_endPropertyIndex).type])
 	{
 		return false;
 	}
@@ -629,7 +692,7 @@ void Program::start()
 
 
 		//Draw windows
-		drawMainMenu();
+		//drawMainMenu();
 		drawWindowNodeList();
 		drawWindowNodeViewer();
 		

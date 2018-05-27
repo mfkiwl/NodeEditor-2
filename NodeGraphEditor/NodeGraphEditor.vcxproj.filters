@@ -85,5 +85,8 @@
     <None Include="output.json">
       <Filter>Source Files</Filter>
     </None>
+    <None Include="data.json">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

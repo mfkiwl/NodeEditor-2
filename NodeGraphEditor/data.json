@@ -1,0 +1,256 @@
+{
+  "comments": [
+    "0: anything",
+    "1: float",
+    "2: vec2",
+    "3: vec3",
+    "4: vec4"
+  ],
+  "propertyTypeCount": 10,
+  "connectionMatrix": [
+    [ true, false, false, false, false, false, false, false, false, false ],
+    [ true, true, false, false, false, false, false, false, false, false ],
+    [ true, false, true, false, false, false, false, false, false, false ],
+    [ true, false, false, true, false, false, false, false, false, false ],
+    [ true, false, false, false, true, false, false, false, false, false ],
+    [ true, false, false, false, false, true, false, false, false, false ],
+    [ true, false, false, false, false, false, true, false, false, false ],
+    [ true, false, false, false, false, false, false, true, false, false ],
+    [ true, false, false, false, false, false, false, false, true, false ],
+    [ true, false, false, false, false, false, false, false, false, true ]
+  ],
+  "nodeTemplates": [
+    {
+      "id": 0,
+      "name": "Vec3 Property",
+      "inputs": null,
+      "outputs": [
+        {
+          "name": "XYZ",
+          "type": 3
+        },
+        {
+          "name": "X",
+          "type": 1
+        },
+        {
+          "name": "Y",
+          "type": 1
+        },
+        {
+          "name": "Z",
+          "type": 1
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "name": "Float Property",
+      "inputs": null,
+      "outputs": [
+        {
+          "name": "Out",
+          "type": 1
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Time",
+      "inputs": null,
+      "outputs": [
+        {
+          "name": "Out",
+          "type": 1
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Vertex Position",
+      "inputs": null,
+      "outputs": [
+        {
+          "name": "XYZ",
+          "type": 3
+        },
+        {
+          "name": "X",
+          "type": 1
+        },
+        {
+          "name": "Y",
+          "type": 1
+        },
+        {
+          "name": "Z",
+          "type": 1
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Scale Vec2",
+      "inputs": [
+        {
+          "name": "In",
+          "type": 2
+        },
+        {
+          "name": "Scalar",
+          "type": 1
+        }
+      ],
+      "outputs": [
+        {
+          "name": "Out",
+          "type": 2
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "Scale Vec3",
+      "inputs": [
+        {
+          "name": "In",
+          "type": 3
+        },
+        {
+          "name": "Scalar",
+          "type": 1
+        }
+      ],
+      "outputs": [
+        {
+          "name": "Out",
+          "type": 3
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "name": "Add Vec3",
+      "inputs": [
+        {
+          "name": "A",
+          "type": 3
+        },
+        {
+          "name": "B",
+          "type": 3
+        }
+      ],
+      "outputs": [
+        {
+          "name": "Out",
+          "type": 3
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "name": "Noise Generator",
+      "inputs": [
+        {
+          "name": "Position",
+          "type": 0
+        }
+      ],
+      "outputs": [
+        {
+          "name": "Out",
+          "type": 1
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "name": "Vertex TexCoord 0",
+      "inputs": null,
+      "outputs": [
+        {
+          "name": "UV",
+          "type": 2
+        },
+        {
+          "name": "U",
+          "type": 1
+        },
+        {
+          "name": "V",
+          "type": 1
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "name": "Vec4 Property",
+      "inputs": null,
+      "outputs": [
+        {
+          "name": "XYZW",
+          "type": 4
+        },
+        {
+          "name": "X",
+          "type": 1
+        },
+        {
+          "name": "Y",
+          "type": 1
+        },
+        {
+          "name": "Z",
+          "type": 1
+        },
+        {
+          "name": "W",
+          "type": 1
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "name": "Vertex Normal",
+      "inputs": null,
+      "outputs": [
+        {
+          "name": "XYZ",
+          "type": 3
+        },
+        {
+          "name": "X",
+          "type": 1
+        },
+        {
+          "name": "Y",
+          "type": 1
+        },
+        {
+          "name": "Z",
+          "type": 1
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "name": "END NODE",
+      "inputs": [
+        {
+          "name": "Albedo",
+          "type": 3
+        },
+        {
+          "name": "Opacity",
+          "type": 1
+        },
+        {
+          "name": "Local Vertex Offset",
+          "type": 3
+        }
+      ],
+      "outputs": null
+    }
+  ]
+}

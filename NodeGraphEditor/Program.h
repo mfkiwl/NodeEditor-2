@@ -30,8 +30,23 @@ public:
 	ImFont * uiFont;
 	ImFont * defaultFont;
 
+	int propertyTypeCount = 0;
+
 private:
 	sf::RenderWindow * sfmlWindow = nullptr;
+
+
+	std::vector<std::vector<bool>> connectionMatrix;
+
+
+	void loadData();
+	void loadFonts();
+	void load();
+
+	void closeCurrent();
+	void open();
+	void save();
+
 
 	bool nodeListOpen = true;
 	void drawMainMenu();
@@ -66,6 +81,8 @@ private:
 	int propertyIDDrag = -1;
 	sf::Vector2f dragInitialOffset{ 0, 0 };
 
+	sf::Vector2f nodePlacementPosition{ 0, 0 };
+
 
 	bool tryConnectNodes(int _startNode, int _startPropertyIndex, int _endNode, int _endPropertyIndex);
 	void tryDisconnectNodes(int _startNode, int _startPropertyIndex, int _endNode, int _endPropertyIndex);
@@ -79,12 +96,6 @@ private:
 public:
 
 	void start();
-	void loadFonts();
-	void load();
-
-	void closeCurrent();
-	void open();
-	void save();
 
 
 	const NodeData & getNodeData(int _id) const;

@@ -21,6 +21,31 @@ NodeTemplate::~NodeTemplate()
 {
 }
 
+nlohmann::json NodeTemplate::serialise() const
+{
+	return nlohmann::json();
+}
+
+NodeTemplate NodeTemplate::deserialise(const nlohmann::json & _j)
+{
+	auto & inputsJson = _j.at("inputs");
+	auto & outputsJson = _j.at("outputs");
+	std::vector<Property> inputs(inputsJson.size());
+	std::vector<Property> outputs(outputsJson.size());
+
+	for (int i = 0; i < inputsJson.size(); ++i)
+	{
+		inputs[i] = Property::deserialise(inputsJson[i]);
+	}
+
+	for (int i = 0; i < outputsJson.size(); ++i)
+	{
+		outputs[i] = Property::deserialise(outputsJson[i]);
+	}
+
+	return NodeTemplate{ _j.at("id").get<int>(), _j.at("name"), inputs, outputs};
+}
+
 void NodeTemplate::draw(ImDrawList * _drawList, Camera & _camera, const NodeData & _data, bool _isSelection)
 {
 	recalculateSize();
