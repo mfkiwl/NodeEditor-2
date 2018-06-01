@@ -131,6 +131,7 @@ void Program::closeCurrent()
 {
 	nodeViewerCamera = new Camera();
 	nodeDatas.clear();
+	nextNodeID = 0;
 }
 
 void Program::open()
@@ -146,7 +147,15 @@ void Program::open()
 	openFile.close();
 
 
-	for (auto itr = inputJson.begin(); itr != inputJson.end(); ++itr)
+	//LOAD NEXT NODE ID
+	nextNodeID = inputJson.at("nextNodeID").get<int>();
+
+
+	//LOAD NODE DATAS
+
+	auto & nodeDatasJson = inputJson.at("nodeDatas");
+
+	for (auto itr = nodeDatasJson.begin(); itr != nodeDatasJson.end(); ++itr)
 	{
 		const json nodeDataJson = *itr;
 
@@ -163,14 +172,21 @@ void Program::save()
 
 	json outputJson;
 
+
+	outputJson["nextNodeID"] = nextNodeID;
+
+	json nodeDatasJson;
+
 	for (const auto & _nodeData : nodeDatas)
 	{
 		const auto & nodeData = _nodeData.second;
 
 		json nodeSerialised = nodeData->serialise();
 
-		outputJson.push_back(nodeSerialised);
+		nodeDatasJson.push_back(nodeSerialised);
 	}
+
+	outputJson["nodeDatas"] = nodeDatasJson;
 
 
 
@@ -248,8 +264,8 @@ void Program::drawWindowNodeList()
 	{
 		if (ImGui::Button(nodeTemplate.second->name.c_str()))
 		{
-			int size = nodeDatas.size();
-			nodeDatas[size] = std::make_shared<NodeData>(size, nodeTemplate.second->id, nodePlacementPosition);
+			nodeDatas[nextNodeID] = std::make_shared<NodeData>(nextNodeID, nodeTemplate.second->id, nodePlacementPosition);
+			++nextNodeID;
 		}
 	}
 
@@ -321,13 +337,13 @@ void Program::drawWindowNodeViewer()
 
 		//Draw grid
 		{
-			sf::Vector2f yStart = nodeViewerCamera->getTransform().transformPoint({ 0, -1000 });
-			sf::Vector2f yEnd = nodeViewerCamera->getTransform().transformPoint({ 0, 1000 });
+			sf::Vector2f yStart = nodeViewerCamera->getTransform().transformPoint({ 0, -100000 });
+			sf::Vector2f yEnd = nodeViewerCamera->getTransform().transformPoint({ 0, 100000 });
 			drawList->AddLine(yStart, yEnd, ImColor::HSV(0.5f, 1, 1));
 
 
-			sf::Vector2f xStart = nodeViewerCamera->getTransform().transformPoint({ -1000, 0 });
-			sf::Vector2f xEnd = nodeViewerCamera->getTransform().transformPoint({ 1000, 0 });
+			sf::Vector2f xStart = nodeViewerCamera->getTransform().transformPoint({ -100000, 0 });
+			sf::Vector2f xEnd = nodeViewerCamera->getTransform().transformPoint({ 100000, 0 });
 			drawList->AddLine(xStart, xEnd, ImColor::HSV(0.5f, 1, 1));
 		}
 
@@ -389,17 +405,6 @@ void Program::mouseDown(const sf::Vector2f & _pos)
 			dragType = DragType::CONNECTION;
 		}
 		
-
-/*
-		std::vector<NodeConnection> & connections = nodeDatas[inputTempNodeDataDragID]->nodeConnections;
-		
-		bool foundConnection = false;
-		for (NodeConnection & connection : connections)
-		{
-			if (connection.)
-		}*/
-
-		//dragType = DragType::CONNECTION;
 	}
 	else if (doesScreenPositionCollideWithJoint(nodeDataDragID, propertyIDDrag, _pos, false))
 	{

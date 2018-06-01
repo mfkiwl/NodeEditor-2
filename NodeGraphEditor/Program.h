@@ -82,6 +82,7 @@ private:
 	sf::Vector2f dragInitialOffset{ 0, 0 };
 
 	sf::Vector2f nodePlacementPosition{ 0, 0 };
+	int nextNodeID = 0;
 
 
 	bool tryConnectNodes(int _startNode, int _startPropertyIndex, int _endNode, int _endPropertyIndex);
