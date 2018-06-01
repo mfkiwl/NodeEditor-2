@@ -1,1 +1,595 @@
-{"nextNodeID":23,"nodeDatas":[{"id":0,"inputNodeConnections":null,"nodeTemplateID":3,"outputNodeConnections":[{"connection":{"endNode":5,"endNodeInputPropertyIndex":0,"startNode":0,"startNodeOutputPropertyIndex":0},"propertyIndex":0}],"position":{"x":190.0,"y":367.0}},{"id":1,"inputNodeConnections":null,"nodeTemplateID":0,"outputNodeConnections":[{"connection":{"endNode":3,"endNodeInputPropertyIndex":0,"startNode":1,"startNodeOutputPropertyIndex":0},"propertyIndex":0}],"position":{"x":214.66668701171875,"y":80.92013549804688}},{"id":2,"inputNodeConnections":null,"nodeTemplateID":2,"outputNodeConnections":[{"connection":{"endNode":3,"endNodeInputPropertyIndex":1,"startNode":2,"startNodeOutputPropertyIndex":0},"propertyIndex":0}],"position":{"x":265.1111145019531,"y":249.11111450195313}},{"id":3,"inputNodeConnections":[{"connection":{"endNode":3,"endNodeInputPropertyIndex":0,"startNode":1,"startNodeOutputPropertyIndex":0},"propertyIndex":0},{"connection":{"endNode":3,"endNodeInputPropertyIndex":1,"startNode":2,"startNodeOutputPropertyIndex":0},"propertyIndex":1}],"nodeTemplateID":4,"outputNodeConnections":[{"connection":{"endNode":10,"endNodeInputPropertyIndex":0,"startNode":3,"startNodeOutputPropertyIndex":0},"propertyIndex":0}],"position":{"x":461.5555725097656,"y":349.33331298828125}},{"id":5,"inputNodeConnections":[{"connection":{"endNode":5,"endNodeInputPropertyIndex":0,"startNode":0,"startNodeOutputPropertyIndex":0},"propertyIndex":0},{"connection":{"endNode":5,"endNodeInputPropertyIndex":1,"startNode":6,"startNodeOutputPropertyIndex":0},"propertyIndex":1}],"nodeTemplateID":4,"outputNodeConnections":[{"connection":{"endNode":10,"endNodeInputPropertyIndex":1,"startNode":5,"startNodeOutputPropertyIndex":0},"propertyIndex":0}],"position":{"x":460.0000305175781,"y":433.888916015625}},{"id":6,"inputNodeConnections":null,"nodeTemplateID":1,"outputNodeConnections":[{"connection":{"endNode":5,"endNodeInputPropertyIndex":1,"startNode":6,"startNodeOutputPropertyIndex":0},"propertyIndex":0}],"position":{"x":195.66664123535156,"y":510.22222900390625}},{"id":7,"inputNodeConnections":null,"nodeTemplateID":8,"outputNodeConnections":[{"connection":{"endNode":8,"endNodeInputPropertyIndex":0,"startNode":7,"startNodeOutputPropertyIndex":0},"propertyIndex":0}],"position":{"x":454.77777099609375,"y":-66.00010681152344}},{"id":8,"inputNodeConnections":[{"connection":{"endNode":8,"endNodeInputPropertyIndex":0,"startNode":7,"startNodeOutputPropertyIndex":0},"propertyIndex":0},{"connection":{"endNode":8,"endNodeInputPropertyIndex":1,"startNode":9,"startNodeOutputPropertyIndex":0},"propertyIndex":1}],"nodeTemplateID":4,"outputNodeConnections":[{"connection":{"endNode":12,"endNodeInputPropertyIndex":0,"startNode":8,"startNodeOutputPropertyIndex":0},"propertyIndex":0}],"position":{"x":721.495361328125,"y":2.2683563232421875}},{"id":9,"inputNodeConnections":null,"nodeTemplateID":1,"outputNodeConnections":[{"connection":{"endNode":8,"endNodeInputPropertyIndex":1,"startNode":9,"startNodeOutputPropertyIndex":0},"propertyIndex":0}],"position":{"x":468.11114501953125,"y":46.222129821777344}},{"id":10,"inputNodeConnections":[{"connection":{"endNode":10,"endNodeInputPropertyIndex":0,"startNode":3,"startNodeOutputPropertyIndex":0},"propertyIndex":0},{"connection":{"endNode":10,"endNodeInputPropertyIndex":1,"startNode":5,"startNodeOutputPropertyIndex":0},"propertyIndex":1}],"nodeTemplateID":6,"outputNodeConnections":[{"connection":{"endNode":11,"endNodeInputPropertyIndex":0,"startNode":10,"startNodeOutputPropertyIndex":0},"propertyIndex":0}],"position":{"x":708.0,"y":408.0}},{"id":11,"inputNodeConnections":[{"connection":{"endNode":11,"endNodeInputPropertyIndex":0,"startNode":10,"startNodeOutputPropertyIndex":0},"propertyIndex":0}],"nodeTemplateID":7,"outputNodeConnections":[{"connection":{"endNode":20,"endNodeInputPropertyIndex":1,"startNode":11,"startNodeOutputPropertyIndex":0},"propertyIndex":0}],"position":{"x":920.940673828125,"y":457.0151672363281}},{"id":12,"inputNodeConnections":[{"connection":{"endNode":12,"endNodeInputPropertyIndex":0,"startNode":8,"startNodeOutputPropertyIndex":0},"propertyIndex":0}],"nodeTemplateID":7,"outputNodeConnections":[{"connection":{"endNode":18,"endNodeInputPropertyIndex":0,"startNode":12,"startNodeOutputPropertyIndex":0},"propertyIndex":0}],"position":{"x":928.0,"y":43.0}},{"id":15,"inputNodeConnections":null,"nodeTemplateID":9,"outputNodeConnections":[{"connection":{"endNode":16,"endNodeInputPropertyIndex":0,"startNode":15,"startNodeOutputPropertyIndex":0},"propertyIndex":0},{"connection":{"endNode":19,"endNodeInputPropertyIndex":0,"startNode":15,"startNodeOutputPropertyIndex":4},"propertyIndex":4}],"position":{"x":1183.70068359375,"y":-159.21090698242188}},{"id":16,"inputNodeConnections":[{"connection":{"endNode":16,"endNodeInputPropertyIndex":0,"startNode":15,"startNodeOutputPropertyIndex":0},"propertyIndex":0},{"connection":{"endNode":16,"endNodeInputPropertyIndex":1,"startNode":19,"startNodeOutputPropertyIndex":0},"propertyIndex":1},{"connection":{"endNode":16,"endNodeInputPropertyIndex":2,"startNode":22,"startNodeOutputPropertyIndex":0},"propertyIndex":2}],"nodeTemplateID":11,"outputNodeConnections":null,"position":{"x":1625.914794921875,"y":66.98361206054688}},{"id":17,"inputNodeConnections":null,"nodeTemplateID":1,"outputNodeConnections":[{"connection":{"endNode":20,"endNodeInputPropertyIndex":0,"startNode":17,"startNodeOutputPropertyIndex":0},"propertyIndex":0}],"position":{"x":936.7880859375,"y":373.3677673339844}},{"id":18,"inputNodeConnections":[{"connection":{"endNode":18,"endNodeInputPropertyIndex":0,"startNode":12,"startNodeOutputPropertyIndex":0},"propertyIndex":0}],"nodeTemplateID":12,"outputNodeConnections":[{"connection":{"endNode":19,"endNodeInputPropertyIndex":1,"startNode":18,"startNodeOutputPropertyIndex":0},"propertyIndex":0}],"position":{"x":1159.0,"y":59.0}},{"id":19,"inputNodeConnections":[{"connection":{"endNode":19,"endNodeInputPropertyIndex":0,"startNode":15,"startNodeOutputPropertyIndex":4},"propertyIndex":0},{"connection":{"endNode":19,"endNodeInputPropertyIndex":1,"startNode":18,"startNodeOutputPropertyIndex":0},"propertyIndex":1}],"nodeTemplateID":13,"outputNodeConnections":[{"connection":{"endNode":16,"endNodeInputPropertyIndex":1,"startNode":19,"startNodeOutputPropertyIndex":0},"propertyIndex":0}],"position":{"x":1332.22216796875,"y":51.77764892578125}},{"id":20,"inputNodeConnections":[{"connection":{"endNode":20,"endNodeInputPropertyIndex":0,"startNode":17,"startNodeOutputPropertyIndex":0},"propertyIndex":0},{"connection":{"endNode":20,"endNodeInputPropertyIndex":1,"startNode":11,"startNodeOutputPropertyIndex":0},"propertyIndex":1}],"nodeTemplateID":13,"outputNodeConnections":[{"connection":{"endNode":22,"endNodeInputPropertyIndex":1,"startNode":20,"startNodeOutputPropertyIndex":0},"propertyIndex":0}],"position":{"x":1149.000732421875,"y":375.2223815917969}},{"id":21,"inputNodeConnections":null,"nodeTemplateID":10,"outputNodeConnections":[{"connection":{"endNode":22,"endNodeInputPropertyIndex":0,"startNode":21,"startNodeOutputPropertyIndex":0},"propertyIndex":0}],"position":{"x":1095.66748046875,"y":228.55572509765625}},{"id":22,"inputNodeConnections":[{"connection":{"endNode":22,"endNodeInputPropertyIndex":0,"startNode":21,"startNodeOutputPropertyIndex":0},"propertyIndex":0},{"connection":{"endNode":22,"endNodeInputPropertyIndex":1,"startNode":20,"startNodeOutputPropertyIndex":0},"propertyIndex":1}],"nodeTemplateID":4,"outputNodeConnections":[{"connection":{"endNode":16,"endNodeInputPropertyIndex":2,"startNode":22,"startNodeOutputPropertyIndex":0},"propertyIndex":0}],"position":{"x":1290.1119384765625,"y":287.4446105957031}}]}
+{
+  "nextNodeID": 23,
+  "nodeDatas": [
+    {
+      "id": 0,
+      "inputNodeConnections": null,
+      "nodeTemplateID": 3,
+      "outputNodeConnections": [
+        {
+          "connection": {
+            "endNode": 5,
+            "endNodeInputPropertyIndex": 0,
+            "startNode": 0,
+            "startNodeOutputPropertyIndex": 0
+          },
+          "propertyIndex": 0
+        }
+      ],
+      "position": {
+        "x": 190.0,
+        "y": 367.0
+      }
+    },
+    {
+      "id": 1,
+      "inputNodeConnections": null,
+      "nodeTemplateID": 0,
+      "outputNodeConnections": [
+        {
+          "connection": {
+            "endNode": 3,
+            "endNodeInputPropertyIndex": 0,
+            "startNode": 1,
+            "startNodeOutputPropertyIndex": 0
+          },
+          "propertyIndex": 0
+        }
+      ],
+      "position": {
+        "x": 214.66668701171875,
+        "y": 80.92013549804688
+      }
+    },
+    {
+      "id": 2,
+      "inputNodeConnections": null,
+      "nodeTemplateID": 2,
+      "outputNodeConnections": [
+        {
+          "connection": {
+            "endNode": 3,
+            "endNodeInputPropertyIndex": 1,
+            "startNode": 2,
+            "startNodeOutputPropertyIndex": 0
+          },
+          "propertyIndex": 0
+        }
+      ],
+      "position": {
+        "x": 265.1111145019531,
+        "y": 249.11111450195313
+      }
+    },
+    {
+      "id": 3,
+      "inputNodeConnections": [
+        {
+          "connection": {
+            "endNode": 3,
+            "endNodeInputPropertyIndex": 0,
+            "startNode": 1,
+            "startNodeOutputPropertyIndex": 0
+          },
+          "propertyIndex": 0
+        },
+        {
+          "connection": {
+            "endNode": 3,
+            "endNodeInputPropertyIndex": 1,
+            "startNode": 2,
+            "startNodeOutputPropertyIndex": 0
+          },
+          "propertyIndex": 1
+        }
+      ],
+      "nodeTemplateID": 4,
+      "outputNodeConnections": [
+        {
+          "connection": {
+            "endNode": 10,
+            "endNodeInputPropertyIndex": 0,
+            "startNode": 3,
+            "startNodeOutputPropertyIndex": 0
+          },
+          "propertyIndex": 0
+        }
+      ],
+      "position": {
+        "x": 461.5555725097656,
+        "y": 349.33331298828125
+      }
+    },
+    {
+      "id": 5,
+      "inputNodeConnections": [
+        {
+          "connection": {
+            "endNode": 5,
+            "endNodeInputPropertyIndex": 0,
+            "startNode": 0,
+            "startNodeOutputPropertyIndex": 0
+          },
+          "propertyIndex": 0
+        },
+        {
+          "connection": {
+            "endNode": 5,
+            "endNodeInputPropertyIndex": 1,
+            "startNode": 6,
+            "startNodeOutputPropertyIndex": 0
+          },
+          "propertyIndex": 1
+        }
+      ],
+      "nodeTemplateID": 4,
+      "outputNodeConnections": [
+        {
+          "connection": {
+            "endNode": 10,
+            "endNodeInputPropertyIndex": 1,
+            "startNode": 5,
+            "startNodeOutputPropertyIndex": 0
+          },
+          "propertyIndex": 0
+        }
+      ],
+      "position": {
+        "x": 460.0000305175781,
+        "y": 433.888916015625
+      }
+    },
+    {
+      "id": 6,
+      "inputNodeConnections": null,
+      "nodeTemplateID": 1,
+      "outputNodeConnections": [
+        {
+          "connection": {
+            "endNode": 5,
+            "endNodeInputPropertyIndex": 1,
+            "startNode": 6,
+            "startNodeOutputPropertyIndex": 0
+          },
+          "propertyIndex": 0
+        }
+      ],
+      "position": {
+        "x": 195.66664123535156,
+        "y": 510.22222900390625
+      }
+    },
+    {
+      "id": 7,
+      "inputNodeConnections": null,
+      "nodeTemplateID": 8,
+      "outputNodeConnections": [
+        {
+          "connection": {
+            "endNode": 8,
+            "endNodeInputPropertyIndex": 0,
+            "startNode": 7,
+            "startNodeOutputPropertyIndex": 0
+          },
+          "propertyIndex": 0
+        }
+      ],
+      "position": {
+        "x": 454.77777099609375,
+        "y": -66.00010681152344
+      }
+    },
+    {
+      "id": 8,
+      "inputNodeConnections": [
+        {
+          "connection": {
+            "endNode": 8,
+            "endNodeInputPropertyIndex": 0,
+            "startNode": 7,
+            "startNodeOutputPropertyIndex": 0
+          },
+          "propertyIndex": 0
+        },
+        {
+          "connection": {
+            "endNode": 8,
+            "endNodeInputPropertyIndex": 1,
+            "startNode": 9,
+            "startNodeOutputPropertyIndex": 0
+          },
+          "propertyIndex": 1
+        }
+      ],
+      "nodeTemplateID": 4,
+      "outputNodeConnections": [
+        {
+          "connection": {
+            "endNode": 12,
+            "endNodeInputPropertyIndex": 0,
+            "startNode": 8,
+            "startNodeOutputPropertyIndex": 0
+          },
+          "propertyIndex": 0
+        }
+      ],
+      "position": {
+        "x": 721.495361328125,
+        "y": 2.2683563232421875
+      }
+    },
+    {
+      "id": 9,
+      "inputNodeConnections": null,
+      "nodeTemplateID": 1,
+      "outputNodeConnections": [
+        {
+          "connection": {
+            "endNode": 8,
+            "endNodeInputPropertyIndex": 1,
+            "startNode": 9,
+            "startNodeOutputPropertyIndex": 0
+          },
+          "propertyIndex": 0
+        }
+      ],
+      "position": {
+        "x": 468.11114501953125,
+        "y": 46.222129821777344
+      }
+    },
+    {
+      "id": 10,
+      "inputNodeConnections": [
+        {
+          "connection": {
+            "endNode": 10,
+            "endNodeInputPropertyIndex": 0,
+            "startNode": 3,
+            "startNodeOutputPropertyIndex": 0
+          },
+          "propertyIndex": 0
+        },
+        {
+          "connection": {
+            "endNode": 10,
+            "endNodeInputPropertyIndex": 1,
+            "startNode": 5,
+            "startNodeOutputPropertyIndex": 0
+          },
+          "propertyIndex": 1
+        }
+      ],
+      "nodeTemplateID": 6,
+      "outputNodeConnections": [
+        {
+          "connection": {
+            "endNode": 11,
+            "endNodeInputPropertyIndex": 0,
+            "startNode": 10,
+            "startNodeOutputPropertyIndex": 0
+          },
+          "propertyIndex": 0
+        }
+      ],
+      "position": {
+        "x": 708.0,
+        "y": 408.0
+      }
+    },
+    {
+      "id": 11,
+      "inputNodeConnections": [
+        {
+          "connection": {
+            "endNode": 11,
+            "endNodeInputPropertyIndex": 0,
+            "startNode": 10,
+            "startNodeOutputPropertyIndex": 0
+          },
+          "propertyIndex": 0
+        }
+      ],
+      "nodeTemplateID": 7,
+      "outputNodeConnections": [
+        {
+          "connection": {
+            "endNode": 20,
+            "endNodeInputPropertyIndex": 1,
+            "startNode": 11,
+            "startNodeOutputPropertyIndex": 0
+          },
+          "propertyIndex": 0
+        }
+      ],
+      "position": {
+        "x": 920.940673828125,
+        "y": 457.0151672363281
+      }
+    },
+    {
+      "id": 12,
+      "inputNodeConnections": [
+        {
+          "connection": {
+            "endNode": 12,
+            "endNodeInputPropertyIndex": 0,
+            "startNode": 8,
+            "startNodeOutputPropertyIndex": 0
+          },
+          "propertyIndex": 0
+        }
+      ],
+      "nodeTemplateID": 7,
+      "outputNodeConnections": [
+        {
+          "connection": {
+            "endNode": 18,
+            "endNodeInputPropertyIndex": 0,
+            "startNode": 12,
+            "startNodeOutputPropertyIndex": 0
+          },
+          "propertyIndex": 0
+        }
+      ],
+      "position": {
+        "x": 928.0,
+        "y": 43.0
+      }
+    },
+    {
+      "id": 15,
+      "inputNodeConnections": null,
+      "nodeTemplateID": 9,
+      "outputNodeConnections": [
+        {
+          "connection": {
+            "endNode": 16,
+            "endNodeInputPropertyIndex": 0,
+            "startNode": 15,
+            "startNodeOutputPropertyIndex": 0
+          },
+          "propertyIndex": 0
+        },
+        {
+          "connection": {
+            "endNode": 19,
+            "endNodeInputPropertyIndex": 0,
+            "startNode": 15,
+            "startNodeOutputPropertyIndex": 4
+          },
+          "propertyIndex": 4
+        }
+      ],
+      "position": {
+        "x": 1183.70068359375,
+        "y": -159.21090698242188
+      }
+    },
+    {
+      "id": 16,
+      "inputNodeConnections": [
+        {
+          "connection": {
+            "endNode": 16,
+            "endNodeInputPropertyIndex": 0,
+            "startNode": 15,
+            "startNodeOutputPropertyIndex": 0
+          },
+          "propertyIndex": 0
+        },
+        {
+          "connection": {
+            "endNode": 16,
+            "endNodeInputPropertyIndex": 1,
+            "startNode": 19,
+            "startNodeOutputPropertyIndex": 0
+          },
+          "propertyIndex": 1
+        },
+        {
+          "connection": {
+            "endNode": 16,
+            "endNodeInputPropertyIndex": 2,
+            "startNode": 22,
+            "startNodeOutputPropertyIndex": 0
+          },
+          "propertyIndex": 2
+        }
+      ],
+      "nodeTemplateID": 11,
+      "outputNodeConnections": null,
+      "position": {
+        "x": 1625.914794921875,
+        "y": 66.98361206054688
+      }
+    },
+    {
+      "id": 17,
+      "inputNodeConnections": null,
+      "nodeTemplateID": 1,
+      "outputNodeConnections": [
+        {
+          "connection": {
+            "endNode": 20,
+            "endNodeInputPropertyIndex": 0,
+            "startNode": 17,
+            "startNodeOutputPropertyIndex": 0
+          },
+          "propertyIndex": 0
+        }
+      ],
+      "position": {
+        "x": 936.7880859375,
+        "y": 373.3677673339844
+      }
+    },
+    {
+      "id": 18,
+      "inputNodeConnections": [
+        {
+          "connection": {
+            "endNode": 18,
+            "endNodeInputPropertyIndex": 0,
+            "startNode": 12,
+            "startNodeOutputPropertyIndex": 0
+          },
+          "propertyIndex": 0
+        }
+      ],
+      "nodeTemplateID": 12,
+      "outputNodeConnections": [
+        {
+          "connection": {
+            "endNode": 19,
+            "endNodeInputPropertyIndex": 1,
+            "startNode": 18,
+            "startNodeOutputPropertyIndex": 0
+          },
+          "propertyIndex": 0
+        }
+      ],
+      "position": {
+        "x": 1159.0,
+        "y": 59.0
+      }
+    },
+    {
+      "id": 19,
+      "inputNodeConnections": [
+        {
+          "connection": {
+            "endNode": 19,
+            "endNodeInputPropertyIndex": 0,
+            "startNode": 15,
+            "startNodeOutputPropertyIndex": 4
+          },
+          "propertyIndex": 0
+        },
+        {
+          "connection": {
+            "endNode": 19,
+            "endNodeInputPropertyIndex": 1,
+            "startNode": 18,
+            "startNodeOutputPropertyIndex": 0
+          },
+          "propertyIndex": 1
+        }
+      ],
+      "nodeTemplateID": 13,
+      "outputNodeConnections": [
+        {
+          "connection": {
+            "endNode": 16,
+            "endNodeInputPropertyIndex": 1,
+            "startNode": 19,
+            "startNodeOutputPropertyIndex": 0
+          },
+          "propertyIndex": 0
+        }
+      ],
+      "position": {
+        "x": 1332.22216796875,
+        "y": 51.77764892578125
+      }
+    },
+    {
+      "id": 20,
+      "inputNodeConnections": [
+        {
+          "connection": {
+            "endNode": 20,
+            "endNodeInputPropertyIndex": 0,
+            "startNode": 17,
+            "startNodeOutputPropertyIndex": 0
+          },
+          "propertyIndex": 0
+        },
+        {
+          "connection": {
+            "endNode": 20,
+            "endNodeInputPropertyIndex": 1,
+            "startNode": 11,
+            "startNodeOutputPropertyIndex": 0
+          },
+          "propertyIndex": 1
+        }
+      ],
+      "nodeTemplateID": 13,
+      "outputNodeConnections": [
+        {
+          "connection": {
+            "endNode": 22,
+            "endNodeInputPropertyIndex": 1,
+            "startNode": 20,
+            "startNodeOutputPropertyIndex": 0
+          },
+          "propertyIndex": 0
+        }
+      ],
+      "position": {
+        "x": 1149.000732421875,
+        "y": 375.2223815917969
+      }
+    },
+    {
+      "id": 21,
+      "inputNodeConnections": null,
+      "nodeTemplateID": 10,
+      "outputNodeConnections": [
+        {
+          "connection": {
+            "endNode": 22,
+            "endNodeInputPropertyIndex": 0,
+            "startNode": 21,
+            "startNodeOutputPropertyIndex": 0
+          },
+          "propertyIndex": 0
+        }
+      ],
+      "position": {
+        "x": 1095.66748046875,
+        "y": 228.55572509765625
+      }
+    },
+    {
+      "id": 22,
+      "inputNodeConnections": [
+        {
+          "connection": {
+            "endNode": 22,
+            "endNodeInputPropertyIndex": 0,
+            "startNode": 21,
+            "startNodeOutputPropertyIndex": 0
+          },
+          "propertyIndex": 0
+        },
+        {
+          "connection": {
+            "endNode": 22,
+            "endNodeInputPropertyIndex": 1,
+            "startNode": 20,
+            "startNodeOutputPropertyIndex": 0
+          },
+          "propertyIndex": 1
+        }
+      ],
+      "nodeTemplateID": 4,
+      "outputNodeConnections": [
+        {
+          "connection": {
+            "endNode": 16,
+            "endNodeInputPropertyIndex": 2,
+            "startNode": 22,
+            "startNodeOutputPropertyIndex": 0
+          },
+          "propertyIndex": 0
+        }
+      ],
+      "position": {
+        "x": 1290.1119384765625,
+        "y": 287.4446105957031
+      }
+    }
+  ]
+}
