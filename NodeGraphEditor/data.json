@@ -12,7 +12,7 @@
     [ true, true, false, false, false, false, false, false, false, false ],
     [ true, false, true, false, false, false, false, false, false, false ],
     [ true, false, false, true, false, false, false, false, false, false ],
-    [ true, false, false, false, true, false, false, false, false, false ],
+    [ true, false, false, true, true, false, false, false, false, false ],
     [ true, false, false, false, false, true, false, false, false, false ],
     [ true, false, false, false, false, false, true, false, false, false ],
     [ true, false, false, false, false, false, false, true, false, false ],
@@ -90,26 +90,6 @@
     },
     {
       "id": 4,
-      "name": "Scale Vec2",
-      "inputs": [
-        {
-          "name": "In",
-          "type": 2
-        },
-        {
-          "name": "Scalar",
-          "type": 1
-        }
-      ],
-      "outputs": [
-        {
-          "name": "Out",
-          "type": 2
-        }
-      ]
-    },
-    {
-      "id": 5,
       "name": "Scale Vec3",
       "inputs": [
         {
@@ -125,6 +105,26 @@
         {
           "name": "Out",
           "type": 3
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "Scale Vec2",
+      "inputs": [
+        {
+          "name": "In",
+          "type": 2
+        },
+        {
+          "name": "Scalar",
+          "type": 1
+        }
+      ],
+      "outputs": [
+        {
+          "name": "Out",
+          "type": 2
         }
       ]
     },
@@ -251,6 +251,42 @@
         }
       ],
       "outputs": null
+    },
+    {
+      "id": 12,
+      "name": "Clamp01",
+      "inputs": [
+        {
+          "name": "In",
+          "type": 1
+        }
+      ],
+      "outputs": [
+        {
+          "name": "Out",
+          "type": 1
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "name": "Multiply",
+      "inputs": [
+        {
+          "name": "A",
+          "type": 1
+        },
+        {
+          "name": "B",
+          "type": 1
+        }
+      ],
+      "outputs": [
+        {
+          "name": "Out",
+          "type": 1
+        }
+      ]
     }
   ]
 }
