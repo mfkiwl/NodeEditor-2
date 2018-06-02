@@ -5,9 +5,6 @@
 #include <SFML\Window\Event.hpp>
 #include <SFML\Graphics\CircleShape.hpp>
 
-//TODO: REMOVE:
-#include <iostream>
-
 #include <algorithm>
 #include <fstream>
 #include "json.hpp"
@@ -91,40 +88,6 @@ void Program::load()
 
 
 	nodeViewerCamera = new Camera();
-
-
-	/*nodeTemplates[5] = std::make_shared<NodeTemplate>(5,
-		"Crazy Operation", 
-		std::vector<Property>{
-			Property("Input 1", 0),
-			Property("Input Thing 2", 1)
-		}, 
-		std::vector<Property>{
-			Property("Ouput 1", 0),
-			Property("Output Thing 2", 1),
-			Property("An Output 3", 2)
-		});
-	nodeTemplates[9] = std::make_shared<NodeTemplate>(9,
-		"Add",
-		std::vector<Property>{
-			Property("Input 1", 0),
-			Property("Input 2", 1)
-		},
-		std::vector<Property>{
-			Property("Ouput 1", 2)
-		});*/
-
-/*
-	nodeDatas[3] = std::make_shared<NodeData>(3, 5, sf::Vector2f{ 100, 100 });
-	nodeDatas[4] = std::make_shared<NodeData>(4, 5, sf::Vector2f{ 500, 100 });
-	nodeDatas[5] = std::make_shared<NodeData>(5, 9, sf::Vector2f{ 100, 500 });
-	nodeDatas[6] = std::make_shared<NodeData>(6, 9, sf::Vector2f{ 500, 500 });*/
-
-
-/*
-	nodeDatas[3]->nodeConnections.push_back(NodeConnection{ 3, 1, 6, 0 });
-	nodeDatas[5]->nodeConnections.push_back(NodeConnection{ 5, 0, 6, 1 });*/
-
 }
 
 void Program::closeCurrent()
@@ -223,6 +186,15 @@ void Program::drawMainMenu()
 			}
 			ImGui::EndMenu();
 		}
+
+		if (nodeDataSelection != -1 && ImGui::BeginMenu("Node"))
+		{
+			if (ImGui::MenuItem("Delete \t DEL"))
+			{
+				deleteSelected();
+			}
+			ImGui::EndMenu();
+		}
 		ImGui::EndMenuBar();
 	}
 }
@@ -234,6 +206,9 @@ void Program::drawWindowNodeList()
 
 	ImGui::Begin("Node List", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse);
 	ImGui::PushFont(uiFont);
+
+	ImGui::Text("Click on a node to instantiate it:");
+	ImGui::Spacing();
 	//ImGui::Button("Example node 1");
 	//ImGui::Button("Example node 2");
 	////ImGui::TreeNode("Category 1");
@@ -286,7 +261,7 @@ void Program::drawWindowNodeViewer()
 	ImGui::SetNextWindowPos({ sfmlWindow->getSize().x / 4.f, 0 });
 	ImGui::SetNextWindowSize({ 3.f * sfmlWindow->getSize().x / 4.f, (float)sfmlWindow->getSize().y });
 
-	if (ImGui::Begin("Node Editor", nullptr, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoCollapse))
+	if (ImGui::Begin("Node Editor", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoCollapse))
 	{
 		drawMainMenu();
 
@@ -335,17 +310,17 @@ void Program::drawWindowNodeViewer()
 		//Actually draw
 		auto drawList = ImGui::GetWindowDrawList();
 
-		//Draw grid
-		{
-			sf::Vector2f yStart = nodeViewerCamera->getTransform().transformPoint({ 0, -100000 });
-			sf::Vector2f yEnd = nodeViewerCamera->getTransform().transformPoint({ 0, 100000 });
-			drawList->AddLine(yStart, yEnd, ImColor::HSV(0.5f, 1, 1));
+		////Draw grid
+		//{
+		//	sf::Vector2f yStart = nodeViewerCamera->getTransform().transformPoint({ 0, -100000 });
+		//	sf::Vector2f yEnd = nodeViewerCamera->getTransform().transformPoint({ 0, 100000 });
+		//	drawList->AddLine(yStart, yEnd, ImColor::HSV(0.5f, 1, 1));
 
 
-			sf::Vector2f xStart = nodeViewerCamera->getTransform().transformPoint({ -100000, 0 });
-			sf::Vector2f xEnd = nodeViewerCamera->getTransform().transformPoint({ 100000, 0 });
-			drawList->AddLine(xStart, xEnd, ImColor::HSV(0.5f, 1, 1));
-		}
+		//	sf::Vector2f xStart = nodeViewerCamera->getTransform().transformPoint({ -100000, 0 });
+		//	sf::Vector2f xEnd = nodeViewerCamera->getTransform().transformPoint({ 100000, 0 });
+		//	drawList->AddLine(xStart, xEnd, ImColor::HSV(0.5f, 1, 1));
+		//}
 
 		//Draw nodes
 		{
@@ -476,17 +451,11 @@ bool Program::doesScreenPositionCollideWithJoint(int & _node, int & _property, c
 		{
 			for (int i = 0; i < nodeTemplate.getInputsCount(); ++i)
 			{
-				//auto jointRegion = nodeTemplate.getInputJointCircleRegion(i, *nodeViewerCamera, nodeData);
-				//if (circleContainsPoint(jointRegion, _position))
-
-
 				auto jointRegion = nodeTemplate.getInputJointRegion(i, *nodeViewerCamera, nodeData);
 				if (jointRegion.contains(_position))
 				{
 					_node = nodeDataPair.first;
 					_property = i;
-
-					std::cout << "Mouse down on node: " << nodeDataPair.first << ", input property: " << i << std::endl;
 
 					return true;
 				}
@@ -496,17 +465,11 @@ bool Program::doesScreenPositionCollideWithJoint(int & _node, int & _property, c
 		{
 			for (int i = 0; i < nodeTemplate.getOutputsCount(); ++i)
 			{
-				//auto jointRegion = nodeTemplate.getOutputJointCircleRegion(i, *nodeViewerCamera, nodeData);
-				//if (circleContainsPoint(jointRegion, _position))
-
-
 				auto jointRegion = nodeTemplate.getOutputJointRegion(i, *nodeViewerCamera, nodeData);
 				if (jointRegion.contains(_position))
 				{
 					_node = nodeDataPair.first;
 					_property = i;
-
-					std::cout << "Mouse down on node: " << nodeDataPair.first << ", output property: " << i << std::endl;
 
 					return true;
 				}
@@ -525,15 +488,65 @@ void Program::mouseUpdate(const sf::Vector2f & _pos)
 
 	switch (dragType)
 	{
+	case DragType::NONE:
+	{
+		int hoverNodeID = -1;
+		int hoverPropertyID = -1;
+		sf::Vector2f hoverNodeInitialOffset;
+		if (doesScreenPositionCollideWithJoint(hoverNodeID, hoverPropertyID, _pos, false))
+		{
+			showTooltip("New Connection");
+		}
+		else if (doesScreenPositionCollideWithJoint(hoverNodeID, hoverPropertyID, _pos, true))
+		{
+			//Edit connection feedback from end of it
+			auto itr = nodeDatas[hoverNodeID]->inputConnections.find(hoverPropertyID);
+			if (itr != nodeDatas[hoverNodeID]->inputConnections.end())
+			{
+				showTooltip("Edit Connection");
+			}
+		}
+		else if (doesScreenPositionCollideWithNode(hoverNodeID, hoverNodeInitialOffset, _pos))
+		{
+			if (nodeDataSelection == hoverNodeID)
+			{
+				showTooltip("Drag Node");
+			}
+			else
+			{
+				showTooltip("Select/Drag Node");
+			}
+		}
+	}
+		break;
+
 	case DragType::NODEDATA:
+	{
 		if (nodeDataDragID != -1)
 		{
 			nodeDatas[nodeDataDragID]->position = worldPos;
 		}
+	}
 		break;
 
 	case DragType::CONNECTION:
+	{
+		int newNodeID = -1;
+		int newPropertyID = -1;
+		if (doesScreenPositionCollideWithJoint(newNodeID, newPropertyID, _pos, true))
+		{
+			if (isValidConnection(nodeDataDragID, propertyIDDrag, newNodeID, newPropertyID))
+			{
+				//Show feedback
+				showTooltip("Complete Connection");
+			}
+			else
+			{
+				showTooltip("Invalid Connection", false);
+			}
 
+		}
+	}
 		break;
 	}
 }
@@ -547,7 +560,7 @@ Program::~Program()
 {
 }
 
-bool Program::tryConnectNodes(int _startNode, int _startPropertyIndex, int _endNode, int _endPropertyIndex)
+bool Program::isValidConnection(int _startNode, int _startPropertyIndex, int _endNode, int _endPropertyIndex)
 {
 	//Can't connect node to itself
 	if (_startNode == _endNode)
@@ -558,8 +571,17 @@ bool Program::tryConnectNodes(int _startNode, int _startPropertyIndex, int _endN
 	//Can't connect different types
 	auto startTemplate = nodeTemplates[nodeDatas[_startNode]->nodeTemplateID];
 	auto endTemplate = nodeTemplates[nodeDatas[_endNode]->nodeTemplateID];
-	//if (startTemplate->getOutputProperty(_startPropertyIndex).type != endTemplate->getInputProperty(_endPropertyIndex).type)
 	if (!connectionMatrix[startTemplate->getOutputProperty(_startPropertyIndex).type][endTemplate->getInputProperty(_endPropertyIndex).type])
+	{
+		return false;
+	}
+
+	return true;
+}
+
+bool Program::tryConnectNodes(int _startNode, int _startPropertyIndex, int _endNode, int _endPropertyIndex)
+{
+	if (!isValidConnection(_startNode, _startPropertyIndex, _endNode, _endPropertyIndex))
 	{
 		return false;
 	}
@@ -639,6 +661,25 @@ void Program::deleteAllConnections(int _nodeID)
 	}
 }
 
+void Program::deleteSelected()
+{
+	deleteAllConnections(nodeDataSelection);
+	nodeDatas.erase(nodeDataSelection);
+	nodeDataSelection = -1;
+}
+
+void Program::showTooltip(const std::string & _text, bool _good)
+{
+	ImGui::SetNextWindowPos(sf::Vector2f(ImGui::GetMousePos()) + sf::Vector2f{ 5, 5 });
+	if (ImGui::Begin("Tooltip", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings))
+	{
+		ImGui::SetWindowSize(sf::Vector2f{ ImGui::CalcTextSize(_text.c_str()) } + sf::Vector2f{ 20, 5 });
+		ImGui::TextColored(_good ? ImColor::HSV(0.5f, 1, 1) : ImColor::HSV(0, 1, 1), _text.c_str());
+		//ImGui::Text(_text.c_str());
+	}
+	ImGui::End();
+}
+
 void Program::start()
 {
 	sf::RenderWindow & window = *(sfmlWindow = new sf::RenderWindow(sf::VideoMode(1280, 768), "Node Graph Editor"));
@@ -650,6 +691,9 @@ void Program::start()
 
 	sf::Clock deltaClock;
 	while (window.isOpen()) {
+		//SETUP
+		ImGui::SFML::Update(window, deltaClock.restart());
+
 		sf::Event event;
 		while (window.pollEvent(event)) {
 			ImGui::SFML::ProcessEvent(event);
@@ -682,9 +726,7 @@ void Program::start()
 			{
 				if (event.key.code == sf::Keyboard::Key::Delete)
 				{
-					deleteAllConnections(nodeDataSelection);
-					nodeDatas.erase(nodeDataSelection);
-					nodeDataSelection = -1;
+					deleteSelected();
 				}
 			}
 		}
@@ -692,8 +734,6 @@ void Program::start()
 		mouseUpdate(ImGui::GetMousePos());
 
 
-		//SETUP
-		ImGui::SFML::Update(window, deltaClock.restart());
 
 
 		//Draw windows

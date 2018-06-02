@@ -84,7 +84,7 @@ private:
 	sf::Vector2f nodePlacementPosition{ 0, 0 };
 	int nextNodeID = 0;
 
-
+	bool isValidConnection(int _startNode, int _startPropertyIndex, int _endNode, int _endPropertyIndex);
 	bool tryConnectNodes(int _startNode, int _startPropertyIndex, int _endNode, int _endPropertyIndex);
 	void tryDisconnectNodes(int _startNode, int _startPropertyIndex, int _endNode, int _endPropertyIndex);
 	void disconnectInputGivenOutput(NodeConnection & _outputConnection);
@@ -92,7 +92,12 @@ private:
 
 	void deleteAllConnections(int _nodeID);
 
+	void deleteSelected();
+
 	int nodeDataSelection = -1;
+
+
+	void showTooltip(const std::string & _text, bool _good = true);
 
 public:
 
