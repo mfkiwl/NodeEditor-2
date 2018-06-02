@@ -99,6 +99,8 @@ private:
 
 	void showTooltip(const std::string & _text, bool _good = true);
 
+	bool chooseFile(const std::string & _title, bool _isOpen, std::string & _filename) const;
+
 public:
 
 	void start();

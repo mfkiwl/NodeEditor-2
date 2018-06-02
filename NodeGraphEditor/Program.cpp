@@ -7,6 +7,7 @@
 
 #include <algorithm>
 #include <fstream>
+#include <Windows.h>
 #include "json.hpp"
 
 #include "NodeTemplate.h"
@@ -99,11 +100,17 @@ void Program::closeCurrent()
 
 void Program::open()
 {
+	std::string filename;
+	if (!chooseFile("Open Node Editor File", true, filename))
+	{
+		return;
+	}
+
 	using namespace nlohmann;
 
 	json inputJson;
 
-	std::ifstream openFile("output.json");
+	std::ifstream openFile(filename);
 
 	openFile >> inputJson;
 
@@ -130,6 +137,12 @@ void Program::open()
 
 void Program::save()
 {
+	std::string filename;
+	if (!chooseFile("Save Node Editor File", false, filename))
+	{
+		return;
+	}
+
 	using namespace nlohmann;
 
 
@@ -153,7 +166,7 @@ void Program::save()
 
 
 
-	std::ofstream saveFile("output.json");
+	std::ofstream saveFile(filename);
 
 	saveFile << outputJson;
 
@@ -675,9 +688,47 @@ void Program::showTooltip(const std::string & _text, bool _good)
 	{
 		ImGui::SetWindowSize(sf::Vector2f{ ImGui::CalcTextSize(_text.c_str()) } + sf::Vector2f{ 20, 5 });
 		ImGui::TextColored(_good ? ImColor::HSV(0.5f, 1, 1) : ImColor::HSV(0, 1, 1), _text.c_str());
-		//ImGui::Text(_text.c_str());
 	}
 	ImGui::End();
+}
+
+bool Program::chooseFile(const std::string & _title, bool _isOpen, std::string & _filename) const
+{
+	char buffer[MAX_PATH] = "";
+
+	OPENFILENAME ofn;
+	ZeroMemory(&ofn, sizeof(ofn));
+
+	ofn.lStructSize = sizeof(OPENFILENAME);
+	ofn.hwndOwner = NULL;
+	ofn.hInstance = NULL;
+	ofn.lpstrFilter = "Node Editor Files\0*.json\0\0";
+	ofn.lpstrFile = buffer;
+	ofn.nMaxFile = MAX_PATH;
+	ofn.lpstrTitle = _title.c_str();
+	//ofn.nMaxFileTitle = sizeof(_title.c_str());
+
+
+	if (_isOpen)
+	{
+		if (GetOpenFileName(&ofn))
+		{
+			_filename = buffer;
+			return true;
+		}
+	}
+	else
+	{
+		if (GetSaveFileName(&ofn))
+		{
+			_filename = buffer;
+			return true;
+		}
+	}
+
+	DWORD err = CommDlgExtendedError();
+
+	return false;
 }
 
 void Program::start()
