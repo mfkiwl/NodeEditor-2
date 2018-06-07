@@ -777,7 +777,8 @@ void Program::start()
 			{
 				if (event.key.code == sf::Keyboard::Key::Delete)
 				{
-					deleteSelected();
+					if (nodeDataSelection != -1)
+						deleteSelected();
 				}
 			}
 		}
