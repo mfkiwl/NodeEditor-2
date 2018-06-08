@@ -16,16 +16,31 @@ public:
 	Camera();
 	~Camera();
 
+	///
+	/// Returns the transform of the camera
+	///
 	const sf::Transform & getTransform() const;
 
+	///
+	/// Returns the position of the camera
+	///
 	sf::Vector2f & getPosition();
+	
+	///
+	/// Returns the scale (zoom) of the camera
+	///
 	float & getScale();
+
+	///
+	/// Returns the scale (zoom) of the camera
+	///
 	const float & getScale() const;
 
-	//void setPosition(sf::Vector2f & _position);
-	//void setScale(float & _scale);
 	void setWindowPosition(sf::Vector2f & _position);
 
+	///
+	/// Updates the transform based on changes to position/scale
+	///
 	void updateTransform();
 };
 

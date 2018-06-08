@@ -23,13 +23,34 @@ private:
 	static Program * instance;
 
 public:
+	///
+	/// Returns the singleton instance of the NodeEditor program
+	///
 	static Program & get();
+
+	///
+	/// Creates the singleton instance of the NodeEditor program
+	///
 	static void create();
 
+	///
+	/// The high resolution font for rendering
+	///
 	ImFont * nodeHighResFont;
+
+	///
+	/// The UI font for rendering
+	///
 	ImFont * uiFont;
+
+	///
+	/// The default ImGui font
+	///
 	ImFont * defaultFont;
 
+	///
+	/// The number of property data types
+	///
 	int propertyTypeCount = 0;
 
 private:
@@ -103,10 +124,22 @@ private:
 
 public:
 
+	///
+	/// Starts the NodeEditor program
+	///
 	void start();
 
 
+	///
+	/// Returns a node
+	/// _id - the ID of the node
+	///
 	const NodeData & getNodeData(int _id) const;
+
+	///
+	/// Returns a node template
+	/// _id - the ID of the node template
+	///
 	const NodeTemplate & getNodeTemplate(int _id) const;
 };
 
